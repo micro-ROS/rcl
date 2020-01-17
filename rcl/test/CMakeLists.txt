@@ -15,8 +15,6 @@ include(cmake/rcl_add_custom_gtest.cmake)
 include(cmake/rcl_add_custom_launch_test.cmake)
 
 set(extra_lib_dirs "${rcl_lib_dir}")
-set(test_resources_dir_name "resources")
-add_definitions(-DTEST_RESOURCES_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/${test_resources_dir_name}")
 
 # finding gtest once in the highest scope
 # prevents finding it repeatedly in each local scope
@@ -301,14 +299,3 @@ rcl_add_custom_gtest(test_timer${target_suffix}
   LIBRARIES ${PROJECT_NAME}
   AMENT_DEPENDENCIES "osrf_testing_tools_cpp"
 )
-
-rcl_add_custom_gtest(test_security_directory
-  SRCS rcl/test_security_directory.cpp
-  APPEND_LIBRARY_DIRS ${extra_lib_dirs}
-  LIBRARIES ${PROJECT_NAME}
-  AMENT_DEPENDENCIES "osrf_testing_tools_cpp"
-)
-
-# Install test resources
-install(DIRECTORY ${test_resources_dir_name}
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
