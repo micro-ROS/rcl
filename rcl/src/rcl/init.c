@@ -79,6 +79,9 @@ rcl_init(
   RCL_CHECK_FOR_NULL_WITH_MSG(
     context->impl, "failed to allocate memory for context impl", return RCL_RET_BAD_ALLOC);
 
+  // Store the allocator.
+  context->impl->allocator = allocator;
+
   // Zero initialize rmw context first so its validity can by checked in cleanup.
   context->impl->rmw_context = rmw_get_zero_initialized_context();
 
@@ -146,9 +149,6 @@ rcl_init(
     fail_ret = rcl_convert_rmw_ret_to_rcl_ret(rmw_ret);
     goto fail;
   }
-
-  // Store the allocator.
-  context->impl->allocator = allocator;
 
   return RCL_RET_OK;
 fail:
