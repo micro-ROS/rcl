@@ -2,19 +2,28 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rcl)
 
+option(RCL_YAML_PARSER "Enable/disable the rcl_yaml_param_parser tool" OFF)
+option(RCL_LOGGIN "Enable/disable logging" OFF)
+
 find_package(ament_cmake_ros REQUIRED)
 
 find_package(rcl_interfaces REQUIRED)
-find_package(rcl_yaml_param_parser REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(tracetools REQUIRED)
 
+if(RCL_YAML_PARSER)
+  find_package(rcl_yaml_param_parser REQUIRED)
+endif()
+
 include(cmake/rcl_set_symbol_visibility_hidden.cmake)
-include(cmake/get_default_rcl_logging_implementation.cmake)
-get_default_rcl_logging_implementation(RCL_LOGGING_IMPL)
+
+if(RCL_LOGGIN)
+  include(cmake/get_default_rcl_logging_implementation.cmake)
+  get_default_rcl_logging_implementation(RCL_LOGGING_IMPL)
+endif()
 
 # Default to C11
 if(NOT CMAKE_C_STANDARD)
@@ -69,14 +78,24 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # specific order: dependents before dependencies
 ament_target_dependencies(${PROJECT_NAME}
   "rcl_interfaces"
-  "rcl_yaml_param_parser"
   "rcutils"
   "rmw"
   "rmw_implementation"
-  ${RCL_LOGGING_IMPL}
   "rosidl_runtime_c"
   "tracetools"
 )
+
+if(RCL_YAML_PARSER)
+  ament_target_dependencies(${PROJECT_NAME}
+    "rcl_yaml_param_parser"
+  )
+endif()
+
+if(RCL_LOGGIN)
+  ament_target_dependencies(${PROJECT_NAME}
+    ${RCL_LOGGING_IMPL}
+  )
+endif()
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
@@ -102,13 +121,19 @@ ament_export_targets(${PROJECT_NAME})
 
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(rcl_interfaces)
-ament_export_dependencies(rcl_yaml_param_parser)
 ament_export_dependencies(rmw_implementation)
 ament_export_dependencies(rmw)
 ament_export_dependencies(rcutils)
-ament_export_dependencies(${RCL_LOGGING_IMPL})
 ament_export_dependencies(rosidl_runtime_c)
 ament_export_dependencies(tracetools)
+
+if(RCL_YAML_PARSER)
+  ament_export_dependencies(rcl_yaml_param_parser)
+endif()
+
+if(RCL_LOGGIN)
+  ament_export_dependencies(${RCL_LOGGING_IMPL})
+endif()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
