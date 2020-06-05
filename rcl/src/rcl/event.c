@@ -23,7 +23,9 @@ extern "C"
 
 #include "rcl/error_handling.h"
 #include "rcl/expand_topic_name.h"
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/remap.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcutils/logging_macros.h"
 #include "rmw/error_handling.h"
 #include "rmw/validate_full_topic_name.h"

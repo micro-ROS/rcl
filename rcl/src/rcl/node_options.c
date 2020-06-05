@@ -19,10 +19,14 @@ extern "C"
 
 #include "rcl/node_options.h"
 
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/domain_id.h"
 #include "rcl/error_handling.h"
+#ifdef RCL_LOGGING_ENABLED
 #include "rcl/logging_rosout.h"
+#endif // RCL_LOGGING_ENABLED
 
 rcl_node_options_t
 rcl_node_get_default_options()
@@ -35,7 +39,9 @@ rcl_node_get_default_options()
   };
   // Must set the allocator after because it is not a compile time constant.
   default_options.allocator = rcl_get_default_allocator();
+#ifdef RCL_COMMAND_LINE_ENABLED
   default_options.arguments = rcl_get_zero_initialized_arguments();
+#endif // RCL_COMMAND_LINE_ENABLED
   return default_options;
 }
 
@@ -54,10 +60,12 @@ rcl_node_options_copy(
   options_out->allocator = options->allocator;
   options_out->use_global_arguments = options->use_global_arguments;
   options_out->enable_rosout = options->enable_rosout;
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (NULL != options->arguments.impl) {
     rcl_ret_t ret = rcl_arguments_copy(&(options->arguments), &(options_out->arguments));
     return ret;
   }
+#endif // RCL_COMMAND_LINE_ENABLED
   return RCL_RET_OK;
 }
 
@@ -69,6 +77,7 @@ rcl_node_options_fini(
   rcl_allocator_t allocator = options->allocator;
   RCL_CHECK_ALLOCATOR(&allocator, return RCL_RET_INVALID_ARGUMENT);
 
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (options->arguments.impl) {
     rcl_ret_t ret = rcl_arguments_fini(&options->arguments);
     if (RCL_RET_OK != ret) {
@@ -76,6 +85,7 @@ rcl_node_options_fini(
       return ret;
     }
   }
+#endif // RCL_COMMAND_LINE_ENABLED
 
   return RCL_RET_OK;
 }
