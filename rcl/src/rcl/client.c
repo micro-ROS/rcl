@@ -146,6 +146,9 @@ rcl_client_init(
     remapped_service_name = expanded_service_name;
     expanded_service_name = NULL;
   }
+#else
+  remapped_service_name = (char *)allocator->allocate(strlen(expanded_service_name) + 1, allocator->state);
+  memcpy(remapped_service_name, expanded_service_name, strlen(expanded_service_name) + 1);
 #endif // RCL_COMMAND_LINE_ENABLED
 
   // Validate the expanded service name.
