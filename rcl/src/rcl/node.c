@@ -402,6 +402,7 @@ rcl_node_fini(rcl_node_t * node)
   rcl_allocator_t allocator = node->impl->options.allocator;
   rcl_ret_t result = RCL_RET_OK;
   rcl_ret_t rcl_ret = RCL_RET_OK;
+#ifdef RCL_LOGGING_ENABLED
   if (rcl_logging_rosout_enabled() && node->impl->options.enable_rosout) {
     rcl_ret = rcl_logging_rosout_fini_publisher_for_node(node);
     if (rcl_ret != RCL_RET_OK && rcl_ret != RCL_RET_NOT_INIT) {
@@ -409,6 +410,7 @@ rcl_node_fini(rcl_node_t * node)
       result = RCL_RET_ERROR;
     }
   }
+#endif // RCL_LOGGING_ENABLED
   rmw_ret_t rmw_ret = rmw_destroy_node(node->impl->rmw_node_handle);
   if (rmw_ret != RMW_RET_OK) {
     RCL_SET_ERROR_MSG(rmw_get_error_string().str);
