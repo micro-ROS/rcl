@@ -139,6 +139,9 @@ rcl_subscription_init(
     remapped_topic_name = expanded_topic_name;
     expanded_topic_name = NULL;
   }
+#else
+  remapped_topic_name = (char *)allocator->allocate(strlen(expanded_topic_name) + 1, allocator->state);
+  memcpy(remapped_topic_name, expanded_topic_name, strlen(expanded_topic_name) + 1);
 #endif // RCL_COMMAND_LINE_ENABLED
 
   // Validate the expanded topic name.
