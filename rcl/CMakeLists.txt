@@ -2,19 +2,28 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rcl)
 
+option(RCL_COMMAND_LINE_ENABLED "Enable/disable the rcl_yaml_param_parser tool" OFF)
+option(RCL_LOGGING_ENABLED "Enable/disable logging" OFF)
+
 find_package(ament_cmake_ros REQUIRED)
 
 find_package(rcl_interfaces REQUIRED)
-find_package(rcl_yaml_param_parser REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(tracetools REQUIRED)
 
+if(RCL_COMMAND_LINE_ENABLED)
+  find_package(rcl_yaml_param_parser REQUIRED)
+endif()
+
 include(cmake/rcl_set_symbol_visibility_hidden.cmake)
-include(cmake/get_default_rcl_logging_implementation.cmake)
-get_default_rcl_logging_implementation(RCL_LOGGING_IMPL)
+
+if(RCL_LOGGING_ENABLED)
+  include(cmake/get_default_rcl_logging_implementation.cmake)
+  get_default_rcl_logging_implementation(RCL_LOGGING_IMPL)
+endif()
 
 # Default to C11
 if(NOT CMAKE_C_STANDARD)
@@ -31,7 +40,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set(${PROJECT_NAME}_sources
-  src/rcl/arguments.c
+  $<$<BOOL:${RCL_COMMAND_LINE_ENABLED}>:src/rcl/arguments.c>
   src/rcl/client.c
   src/rcl/common.c
   src/rcl/context.c
@@ -45,12 +54,12 @@ set(${PROJECT_NAME}_sources
   src/rcl/lexer.c
   src/rcl/lexer_lookahead.c
   src/rcl/localhost.c
-  src/rcl/logging_rosout.c
-  src/rcl/logging.c
+  $<$<BOOL:${RCL_LOGGING_ENABLED}>:src/rcl/logging_rosout.c>
+  $<$<BOOL:${RCL_LOGGING_ENABLED}>:src/rcl/logging.c>
   src/rcl/node.c
   src/rcl/node_options.c
   src/rcl/publisher.c
-  src/rcl/remap.c
+  $<$<BOOL:${RCL_COMMAND_LINE_ENABLED}>:src/rcl/remap.c>
   src/rcl/rmw_implementation_identifier_check.c
   src/rcl/security.c
   src/rcl/service.c
@@ -69,14 +78,30 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # specific order: dependents before dependencies
 ament_target_dependencies(${PROJECT_NAME}
   "rcl_interfaces"
-  "rcl_yaml_param_parser"
   "rcutils"
   "rmw"
   "rmw_implementation"
-  ${RCL_LOGGING_IMPL}
   "rosidl_runtime_c"
   "tracetools"
 )
+
+if(RCL_COMMAND_LINE_ENABLED)
+  ament_target_dependencies(${PROJECT_NAME}
+    "rcl_yaml_param_parser"
+  )
+endif()
+
+if(RCL_LOGGING_ENABLED)
+  ament_target_dependencies(${PROJECT_NAME}
+    ${RCL_LOGGING_IMPL}
+  )
+endif()
+
+target_compile_definitions(${PROJECT_NAME}
+  PRIVATE
+    $<$<BOOL:${RCL_COMMAND_LINE_ENABLED}>:RCL_COMMAND_LINE_ENABLED>
+    $<$<BOOL:${RCL_LOGGING_ENABLED}>:RCL_LOGGING_ENABLED>
+  )
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
@@ -106,13 +131,19 @@ ament_export_targets(${PROJECT_NAME})
 
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(rcl_interfaces)
-ament_export_dependencies(rcl_yaml_param_parser)
 ament_export_dependencies(rmw_implementation)
 ament_export_dependencies(rmw)
 ament_export_dependencies(rcutils)
-ament_export_dependencies(${RCL_LOGGING_IMPL})
 ament_export_dependencies(rosidl_runtime_c)
 ament_export_dependencies(tracetools)
+
+if(RCL_COMMAND_LINE_ENABLED)
+  ament_export_dependencies(rcl_yaml_param_parser)
+endif()
+
+if(RCL_LOGGING_ENABLED)
+  ament_export_dependencies(${RCL_LOGGING_IMPL})
+endif()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

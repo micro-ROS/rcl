@@ -24,14 +24,20 @@ extern "C"
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/error_handling.h"
 #include "rcl/domain_id.h"
 #include "rcl/localhost.h"
+#ifdef RCL_LOGGING_ENABLED
 #include "rcl/logging.h"
 #include "rcl/logging_rosout.h"
+#endif // RCL_LOGGING_ENABLED
 #include "rcl/rcl.h"
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/remap.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/security.h"
 
 #include "rcutils/filesystem.h"
@@ -215,6 +221,7 @@ rcl_node_init(
     goto fail;
   }
 
+#ifdef RCL_COMMAND_LINE_ENABLED
   // Remap the node name and namespace if remap rules are given
   rcl_arguments_t * global_args = NULL;
   if (node->impl->options.use_global_arguments) {
@@ -241,6 +248,7 @@ rcl_node_init(
     should_free_local_namespace_ = true;
     local_namespace_ = remapped_namespace;
   }
+#endif // RCL_COMMAND_LINE_ENABLED
 
   // compute fully qualfied name of the node.
   if ('/' == local_namespace_[strlen(local_namespace_) - 1]) {
@@ -297,6 +305,7 @@ rcl_node_init(
     // error message already set
     goto fail;
   }
+#ifdef RCL_LOGGING_ENABLED
   // The initialization for the rosout publisher requires the node to be in initialized to a point
   // that it can create new topic publishers
   if (rcl_logging_rosout_enabled() && node->impl->options.enable_rosout) {
@@ -306,6 +315,7 @@ rcl_node_init(
       goto fail;
     }
   }
+#endif // RCL_LOGGING_ENABLED
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Node initialized");
   ret = RCL_RET_OK;
   TRACEPOINT(
@@ -317,6 +327,7 @@ rcl_node_init(
   goto cleanup;
 fail:
   if (node->impl) {
+#ifdef RCL_LOGGING_ENABLED
     if (rcl_logging_rosout_enabled() &&
       node->impl->options.enable_rosout &&
       node->impl->logger_name)
@@ -327,6 +338,7 @@ fail:
         ROS_PACKAGE_NAME, "Failed to fini publisher for node: %i", ret);
       allocator->deallocate((char *)node->impl->logger_name, allocator->state);
     }
+#endif // RCL_LOGGING_ENABLED
     if (node->impl->fq_name) {
       allocator->deallocate((char *)node->impl->fq_name, allocator->state);
     }
@@ -349,6 +361,8 @@ fail:
       }
       allocator->deallocate(node->impl->graph_guard_condition, allocator->state);
     }
+
+#ifdef RCL_COMMAND_LINE_ENABLED
     if (NULL != node->impl->options.arguments.impl) {
       ret = rcl_arguments_fini(&(node->impl->options.arguments));
       if (ret != RCL_RET_OK) {
@@ -358,6 +372,7 @@ fail:
         );
       }
     }
+#endif // RCL_COMMAND_LINE_ENABLED
     allocator->deallocate(node->impl, allocator->state);
   }
   *node = rcl_get_zero_initialized_node();
@@ -387,6 +402,7 @@ rcl_node_fini(rcl_node_t * node)
   rcl_allocator_t allocator = node->impl->options.allocator;
   rcl_ret_t result = RCL_RET_OK;
   rcl_ret_t rcl_ret = RCL_RET_OK;
+#ifdef RCL_LOGGING_ENABLED
   if (rcl_logging_rosout_enabled() && node->impl->options.enable_rosout) {
     rcl_ret = rcl_logging_rosout_fini_publisher_for_node(node);
     if (rcl_ret != RCL_RET_OK && rcl_ret != RCL_RET_NOT_INIT) {
@@ -394,6 +410,7 @@ rcl_node_fini(rcl_node_t * node)
       result = RCL_RET_ERROR;
     }
   }
+#endif // RCL_LOGGING_ENABLED
   rmw_ret_t rmw_ret = rmw_destroy_node(node->impl->rmw_node_handle);
   if (rmw_ret != RMW_RET_OK) {
     RCL_SET_ERROR_MSG(rmw_get_error_string().str);
@@ -408,12 +425,14 @@ rcl_node_fini(rcl_node_t * node)
   // assuming that allocate and deallocate are ok since they are checked in init
   allocator.deallocate((char *)node->impl->logger_name, allocator.state);
   allocator.deallocate((char *)node->impl->fq_name, allocator.state);
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (NULL != node->impl->options.arguments.impl) {
     rcl_ret_t ret = rcl_arguments_fini(&(node->impl->options.arguments));
     if (ret != RCL_RET_OK) {
       return ret;
     }
   }
+#endif // RCL_COMMAND_LINE_ENABLED
   allocator.deallocate(node->impl, allocator.state);
   node->impl = NULL;
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Node finalized");

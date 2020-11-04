@@ -27,15 +27,21 @@ extern "C"
 
 #include "tracetools/tracetools.h"
 
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/domain_id.h"
 #include "rcl/error_handling.h"
 #include "rcl/localhost.h"
+#ifdef RCL_LOGGING_ENABLED
 #include "rcl/logging.h"
+#endif // RCL_LOGGING_ENABLED
 #include "rcl/security.h"
 #include "rcl/validate_enclave_name.h"
 
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "./arguments_impl.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "./common.h"
 #include "./context_impl.h"
 #include "./init_options_impl.h"
@@ -80,8 +86,10 @@ rcl_init(
     return RCL_RET_ALREADY_INIT;
   }
 
+#ifdef RCL_COMMAND_LINE_ENABLED
   // Zero initialize global arguments.
   context->global_arguments = rcl_get_zero_initialized_arguments();
+#endif // RCL_COMMAND_LINE_ENABLED
 
   // Setup impl for context.
   // use zero_allocate so the cleanup function will not try to clean up uninitialized parts later
@@ -123,6 +131,7 @@ rcl_init(
     }
   }
 
+#ifdef RCL_COMMAND_LINE_ENABLED
   // Parse the ROS specific arguments.
   ret = rcl_parse_arguments(argc, argv, allocator, &context->global_arguments);
   if (RCL_RET_OK != ret) {
@@ -130,6 +139,7 @@ rcl_init(
     RCUTILS_LOG_ERROR_NAMED(ROS_PACKAGE_NAME, "Failed to parse global arguments");
     goto fail;
   }
+#endif // RCL_COMMAND_LINE_ENABLED
 
   // Set the instance id.
   uint64_t next_instance_id = rcutils_atomic_fetch_add_uint64_t(&__rcl_next_unique_id, 1);
@@ -167,6 +177,7 @@ rcl_init(
     }
   }
 
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (context->global_arguments.impl->enclave) {
     context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
       context->global_arguments.impl->enclave,
@@ -181,6 +192,7 @@ rcl_init(
     fail_ret = RCL_RET_BAD_ALLOC;
     goto fail;
   }
+#endif RCL_COMMAND_LINE_ENABLED
 
   int validation_result;
   size_t invalid_index;
