@@ -24,7 +24,9 @@ extern "C"
 
 #include "rcl/error_handling.h"
 #include "rcl/expand_topic_name.h"
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/remap.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcutils/logging_macros.h"
 #include "rcutils/macros.h"
 #include "rmw/error_handling.h"
@@ -135,6 +137,7 @@ rcl_service_init(
     ret = RCL_RET_ERROR;
     goto cleanup;
   }
+#ifdef RCL_COMMAND_LINE_ENABLED
   rcl_arguments_t * global_args = NULL;
   if (node_options->use_global_arguments) {
     global_args = &(node->context->global_arguments);
@@ -148,6 +151,10 @@ rcl_service_init(
     remapped_service_name = expanded_service_name;
     expanded_service_name = NULL;
   }
+#else
+  remapped_service_name = (char *)allocator->allocate(strlen(expanded_service_name) + 1, allocator->state);
+  memcpy(remapped_service_name, expanded_service_name, strlen(expanded_service_name) + 1);
+#endif // RCL_COMMAND_LINE_ENABLED
 
   // Validate the expanded service name.
   int validation_result;

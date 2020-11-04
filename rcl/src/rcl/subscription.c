@@ -23,7 +23,9 @@ extern "C"
 
 #include "rcl/error_handling.h"
 #include "rcl/expand_topic_name.h"
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/remap.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcutils/logging_macros.h"
 #include "rmw/error_handling.h"
 #include "rmw/validate_full_topic_name.h"
@@ -123,6 +125,7 @@ rcl_subscription_init(
     ret = RCL_RET_ERROR;
     goto cleanup;
   }
+#ifdef RCL_COMMAND_LINE_ENABLED
   rcl_arguments_t * global_args = NULL;
   if (node_options->use_global_arguments) {
     global_args = &(node->context->global_arguments);
@@ -136,6 +139,10 @@ rcl_subscription_init(
     remapped_topic_name = expanded_topic_name;
     expanded_topic_name = NULL;
   }
+#else
+  remapped_topic_name = (char *)allocator->allocate(strlen(expanded_topic_name) + 1, allocator->state);
+  memcpy(remapped_topic_name, expanded_topic_name, strlen(expanded_topic_name) + 1);
+#endif // RCL_COMMAND_LINE_ENABLED
 
   // Validate the expanded topic name.
   int validation_result;

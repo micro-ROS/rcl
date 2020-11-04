@@ -23,7 +23,9 @@ extern "C"
 #include <stdint.h>
 
 #include "rcl/allocator.h"
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/context.h"
 #include "rcl/macros.h"
 #include "rcl/node_options.h"
