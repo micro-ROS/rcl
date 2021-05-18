@@ -75,6 +75,7 @@ rcl_resolve_name(
     goto cleanup;
   }
   // remap topic name
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (!only_expand) {
     ret = rcl_remap_name(
       local_args, global_args, is_service ? RCL_SERVICE_REMAP : RCL_TOPIC_REMAP,
@@ -84,6 +85,7 @@ rcl_resolve_name(
       goto cleanup;
     }
   }
+#endif // RCL_COMMAND_LINE_ENABLED
   if (NULL == remapped_topic_name) {
     remapped_topic_name = expanded_topic_name;
     expanded_topic_name = NULL;
@@ -145,12 +147,18 @@ rcl_node_resolve_name(
     return RCL_RET_ERROR;
   }
   rcl_arguments_t * global_args = NULL;
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (node_options->use_global_arguments) {
     global_args = &(node->context->global_arguments);
   }
+#endif // RCL_COMMAND_LINE_ENABLED
 
   return rcl_resolve_name(
+#ifdef RCL_COMMAND_LINE_ENABLED
     &(node_options->arguments),
+#else
+    NULL,
+#endif // RCL_COMMAND_LINE_ENABLED
     global_args,
     input_topic_name,
     rcl_node_get_name(node),
