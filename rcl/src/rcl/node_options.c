@@ -21,10 +21,14 @@ extern "C"
 
 #include "rcl/node_options.h"
 
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/domain_id.h"
 #include "rcl/error_handling.h"
+#ifdef RCL_LOGGING_ENABLED
 #include "rcl/logging_rosout.h"
+#endif // RCL_LOGGING_ENABLED
 
 rcl_node_options_t
 rcl_node_get_default_options()
@@ -33,9 +37,15 @@ rcl_node_get_default_options()
   rcl_node_options_t default_options = {
     .allocator = rcl_get_default_allocator(),
     .use_global_arguments = true,
+  #ifdef RCL_COMMAND_LINE_ENABLED
     .arguments = rcl_get_zero_initialized_arguments(),
+  #endif // RCL_COMMAND_LINE_ENABLED
+  #ifdef RCL_LOGGING_ENABLED
     .enable_rosout = true,
     .rosout_qos = rcl_qos_profile_rosout_default,
+  #else
+    .enable_rosout = false,
+  #endif // RCL_LOGGING_ENABLED
   };
   return default_options;
 }
@@ -53,17 +63,22 @@ rcl_node_options_copy(
     RCL_SET_ERROR_MSG("Attempted to copy options into itself");
     return RCL_RET_INVALID_ARGUMENT;
   }
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (NULL != options_out->arguments.impl) {
     RCL_SET_ERROR_MSG("Options out must be zero initialized");
     return RCL_RET_INVALID_ARGUMENT;
   }
+#endif // RCL_COMMAND_LINE_ENABLED
+
   options_out->allocator = options->allocator;
   options_out->use_global_arguments = options->use_global_arguments;
   options_out->enable_rosout = options->enable_rosout;
   options_out->rosout_qos = options->rosout_qos;
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (NULL != options->arguments.impl) {
     return rcl_arguments_copy(&(options->arguments), &(options_out->arguments));
   }
+#endif // RCL_COMMAND_LINE_ENABLED
   return RCL_RET_OK;
 }
 
@@ -75,6 +90,7 @@ rcl_node_options_fini(
   rcl_allocator_t allocator = options->allocator;
   RCL_CHECK_ALLOCATOR(&allocator, return RCL_RET_INVALID_ARGUMENT);
 
+#ifdef RCL_COMMAND_LINE_ENABLED
   if (options->arguments.impl) {
     rcl_ret_t ret = rcl_arguments_fini(&options->arguments);
     if (RCL_RET_OK != ret) {
@@ -82,6 +98,7 @@ rcl_node_options_fini(
       return ret;
     }
   }
+#endif // RCL_COMMAND_LINE_ENABLED
 
   return RCL_RET_OK;
 }
