@@ -189,6 +189,8 @@ rcl_init(
     fail_ret = RCL_RET_BAD_ALLOC;
     goto fail;
   }
+#else
+  context->impl->init_options.impl->rmw_init_options.enclave = "/";
 #endif //RCL_COMMAND_LINE_ENABLED
 
   int validation_result;
