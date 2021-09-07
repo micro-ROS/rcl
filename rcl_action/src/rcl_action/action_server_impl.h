@@ -30,7 +30,9 @@ typedef struct rcl_action_server_impl_t
   char * action_name;
   rcl_action_server_options_t options;
   // Array of goal handles
-  rcl_action_goal_handle_t ** goal_handles;
+  rcl_action_goal_handle_t * goal_handles[RCL_ACTION_MAX_GOAL_HANDLES];
+  rcl_action_goal_handle_t goal_handles_memory[RCL_ACTION_MAX_GOAL_HANDLES];
+  rcl_action_goal_handle_t * goal_handles_to_cancel[RCL_ACTION_MAX_GOAL_HANDLES];
   size_t num_goal_handles;
   // Clock
   rcl_clock_t * clock;

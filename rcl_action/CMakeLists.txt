@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rcl_action)
 
+set(RCL_ACTION_MAX_GOAL_HANDLES "10" CACHE STRING "Maximum number of goal handles")
+add_definitions(-DRCL_ACTION_MAX_GOAL_HANDLES=${RCL_ACTION_MAX_GOAL_HANDLES})
+
 find_package(ament_cmake_ros REQUIRED)
 
 find_package(action_msgs REQUIRED)

@@ -51,17 +51,16 @@ rcl_action_goal_handle_init(
   RCL_CHECK_ALLOCATOR_WITH_MSG(&allocator, "invalid allocator", return RCL_RET_INVALID_ARGUMENT);
 
   // Ensure the goal handle is zero initialized
-  if (goal_handle->impl) {
-    RCL_SET_ERROR_MSG("goal_handle already initialized, or memory was unintialized");
-    return RCL_RET_ALREADY_INIT;
+  if (NULL == goal_handle->impl) {
+    // Allocate space for the goal handle impl
+      goal_handle->impl = (rcl_action_goal_handle_impl_t *)allocator.allocate(
+        sizeof(rcl_action_goal_handle_impl_t), allocator.state);
+      if (!goal_handle->impl) {
+        RCL_SET_ERROR_MSG("goal_handle memory allocation failed");
+        return RCL_RET_BAD_ALLOC;
+      }
   }
-  // Allocate space for the goal handle impl
-  goal_handle->impl = (rcl_action_goal_handle_impl_t *)allocator.allocate(
-    sizeof(rcl_action_goal_handle_impl_t), allocator.state);
-  if (!goal_handle->impl) {
-    RCL_SET_ERROR_MSG("goal_handle memory allocation failed");
-    return RCL_RET_BAD_ALLOC;
-  }
+
   // Copy goal info (assuming it is trivially copyable)
   goal_handle->impl->info = *goal_info;
   // Initialize state to ACCEPTED

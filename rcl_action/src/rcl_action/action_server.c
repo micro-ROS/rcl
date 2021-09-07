@@ -156,11 +156,26 @@ rcl_action_server_init(
   action_server->impl->status_publisher = rcl_get_zero_initialized_publisher();
   action_server->impl->action_name = NULL;
   action_server->impl->options = *options;  // copy options
-  action_server->impl->goal_handles = NULL;
   action_server->impl->num_goal_handles = 0u;
   action_server->impl->clock = NULL;
 
   rcl_ret_t ret = RCL_RET_OK;
+
+  // Init  goal handles
+  for (size_t i = 0; i < RCL_ACTION_MAX_GOAL_HANDLES; i++)
+  {
+    static const rcl_action_goal_info_t null_goal_info_t = {0};
+    action_server->impl->goal_handles_memory[i] = (rcl_action_goal_handle_t) {0};
+    ret = rcl_action_goal_handle_init(
+      &action_server->impl->goal_handles_memory[i],
+      &null_goal_info_t,
+      allocator);
+    if (RCL_RET_OK != ret) {
+      goto fail;
+    }
+    action_server->impl->goal_handles[i] = &action_server->impl->goal_handles_memory[i];
+  }
+
   // Initialize services
   SERVICE_INIT(goal);
   SERVICE_INIT(cancel);
@@ -245,10 +260,8 @@ rcl_action_server_fini(rcl_action_server_t * action_server, rcl_node_t * node)
     }
     // Deallocate goal handles storage, but don't fini them.
     for (size_t i = 0; i < action_server->impl->num_goal_handles; ++i) {
-      allocator.deallocate(action_server->impl->goal_handles[i], allocator.state);
+      allocator.deallocate(action_server->impl->goal_handles[i]->impl, allocator.state);
     }
-    allocator.deallocate(action_server->impl->goal_handles, allocator.state);
-    action_server->impl->goal_handles = NULL;
     // Deallocate struct
     allocator.deallocate(action_server->impl, allocator.state);
     action_server->impl = NULL;
@@ -362,21 +375,6 @@ rcl_action_accept_new_goal(
   // TODO(jacobperron): Don't allocate for every accepted goal handle,
   //                    instead double the memory allocated if needed.
   const size_t new_num_goal_handles = num_goal_handles + 1u;
-  void * tmp_ptr = allocator.reallocate(
-    goal_handles, new_num_goal_handles * sizeof(rcl_action_goal_handle_t *), allocator.state);
-  if (!tmp_ptr) {
-    RCL_SET_ERROR_MSG("memory allocation failed for goal handle pointer");
-    return NULL;
-  }
-  goal_handles = (rcl_action_goal_handle_t **)tmp_ptr;
-
-  // Allocate space for a new goal handle
-  tmp_ptr = allocator.allocate(sizeof(rcl_action_goal_handle_t), allocator.state);
-  if (!tmp_ptr) {
-    RCL_SET_ERROR_MSG("memory allocation failed for new goal handle");
-    return NULL;
-  }
-  goal_handles[num_goal_handles] = (rcl_action_goal_handle_t *) tmp_ptr;
 
   // Re-stamp goal info with current time
   rcl_action_goal_info_t goal_info_stamp_now = rcl_action_get_zero_initialized_goal_info();
@@ -389,7 +387,6 @@ rcl_action_accept_new_goal(
   _nanosec_to_goal_info_stamp(&now_time_point, &goal_info_stamp_now);
 
   // Create a new goal handle
-  *goal_handles[num_goal_handles] = rcl_action_get_zero_initialized_goal_handle();
   ret = rcl_action_goal_handle_init(
     goal_handles[num_goal_handles], &goal_info_stamp_now, allocator);
   if (RCL_RET_OK != ret) {
@@ -397,7 +394,6 @@ rcl_action_accept_new_goal(
     return NULL;
   }
 
-  action_server->impl->goal_handles = goal_handles;
   action_server->impl->num_goal_handles = new_num_goal_handles;
   return goal_handles[num_goal_handles];
 }
@@ -591,9 +587,6 @@ rcl_action_expire_goals(
     return RCL_RET_ERROR;
   }
 
-  // Used for shrinking goal handle array
-  rcl_allocator_t allocator = action_server->impl->options.allocator;
-
   size_t num_goals_expired = 0u;
   rcl_ret_t ret_final = RCL_RET_OK;
   const int64_t timeout = (int64_t)action_server->impl->options.result_timeout.nanoseconds;
@@ -622,13 +615,12 @@ rcl_action_expire_goals(
     }
     goal_time = _goal_info_stamp_to_nanosec(info_ptr);
     if ((current_time - goal_time) > timeout) {
-      // Deallocate space used to store pointer to goal handle
-      allocator.deallocate(action_server->impl->goal_handles[i], allocator.state);
-      action_server->impl->goal_handles[i] = NULL;
+      rcl_action_goal_handle_t * aux = action_server->impl->goal_handles[i];
       // Move all pointers after backwards one to fill the gap
       for (size_t post_i = i; (post_i + 1) < num_goal_handles; ++post_i) {
         action_server->impl->goal_handles[post_i] = action_server->impl->goal_handles[post_i + 1];
       }
+      action_server->impl->goal_handles[num_goal_handles - 1] = aux;
       // decrement i to check the same index again now that it has a new goal handle
       --i;
       --num_goal_handles;
@@ -637,24 +629,7 @@ rcl_action_expire_goals(
   }
 
   if (num_goals_expired > 0u) {
-    // Shrink goal handle array if some goals expired
-    if (0u == num_goal_handles) {
-      allocator.deallocate(action_server->impl->goal_handles, allocator.state);
-      action_server->impl->goal_handles = NULL;
-      action_server->impl->num_goal_handles = num_goal_handles;
-    } else {
-      void * tmp_ptr = allocator.reallocate(
-        action_server->impl->goal_handles,
-        num_goal_handles * sizeof(rcl_action_goal_handle_t *),
-        allocator.state);
-      if (!tmp_ptr) {
-        RCL_SET_ERROR_MSG("failed to shrink size of goal handle array");
-        ret_final = RCL_RET_ERROR;
-      } else {
-        action_server->impl->goal_handles = (rcl_action_goal_handle_t **)tmp_ptr;
-        action_server->impl->num_goal_handles = num_goal_handles;
-      }
-    }
+    action_server->impl->num_goal_handles = num_goal_handles;
   }
   rcl_ret_t expire_timer_ret = _recalculate_expire_timer(
     &action_server->impl->expire_timer,
@@ -715,13 +690,7 @@ rcl_action_process_cancel_request(
 
   // Storage for pointers to active goals handles that will be transitioned to canceling
   // Note, we need heap allocation for MSVC support
-  rcl_action_goal_handle_t ** goal_handles_to_cancel =
-    (rcl_action_goal_handle_t **)allocator.allocate(
-    sizeof(rcl_action_goal_handle_t *) * total_num_goals, allocator.state);
-  if (!goal_handles_to_cancel) {
-    RCL_SET_ERROR_MSG("allocation failed for temporary goal handle array");
-    return RCL_RET_BAD_ALLOC;
-  }
+  rcl_action_goal_handle_t ** goal_handles_to_cancel = goal_handles_to_cancel;
   size_t num_goals_to_cancel = 0u;
 
   // Request data
@@ -816,7 +785,6 @@ rcl_action_process_cancel_request(
     }
   }
 cleanup:
-  allocator.deallocate(goal_handles_to_cancel, allocator.state);
   return ret_final;
 }
 
