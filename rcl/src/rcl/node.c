@@ -253,9 +253,11 @@ rcl_node_init(
   }
 
   // node logger name
+#ifdef RCL_LOGGING_ENABLED
   node->impl->logger_name = rcl_create_node_logger_name(name, local_namespace_, allocator);
   RCL_CHECK_FOR_NULL_WITH_MSG(
     node->impl->logger_name, "creating logger name failed", goto fail);
+#endif // RCL_LOGGING_ENABLED
 
   RCUTILS_LOG_DEBUG_NAMED(
     ROS_PACKAGE_NAME, "Using domain ID of '%zu'", context->impl->rmw_context.actual_domain_id);
