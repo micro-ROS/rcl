@@ -260,16 +260,19 @@ rcl_node_init(
 
   if (RCL_DEFAULT_DOMAIN_ID != node->impl->options.domain_id) {
     domain_id = node->impl->options.domain_id;
-  } else if (RCL_DEFAULT_DOMAIN_ID !=
-    context->impl->init_options->impl->rmw_init_options.domain_id)
-  {
-    domain_id = context->impl->init_options->impl->rmw_init_options.domain_id;
   } else {
+    if (RCL_RET_OK != rcl_init_options_get_domain_id(&context->impl->init_options, &domain_id)) {
+      goto fail;
+    }
+  }
+
+  if (RCL_DEFAULT_DOMAIN_ID == domain_id) {
     if (RCL_RET_OK != rcl_get_default_domain_id(&domain_id)) {
       goto fail;
-    } else if (RMW_DEFAULT_DOMAIN_ID == domain_id) {
-      domain_id = 0u;
     }
+  }
+  if (RMW_DEFAULT_DOMAIN_ID == domain_id) {
+    domain_id = 0u;
   }
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Using domain ID of '%zu'", domain_id);
