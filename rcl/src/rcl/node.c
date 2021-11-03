@@ -24,20 +24,14 @@ extern "C"
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
-#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/error_handling.h"
 #include "rcl/domain_id.h"
 #include "rcl/localhost.h"
-#ifdef RCL_LOGGING_ENABLED
 #include "rcl/logging.h"
 #include "rcl/logging_rosout.h"
-#endif // RCL_LOGGING_ENABLED
 #include "rcl/rcl.h"
-#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/remap.h"
-#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/security.h"
 
 #include "rcutils/filesystem.h"
@@ -264,15 +258,20 @@ rcl_node_init(
     node->impl->logger_name, "creating logger name failed", goto fail);
 #endif // RCL_LOGGING_ENABLED
 
-  domain_id = node->impl->options.domain_id;
-  if (RCL_DEFAULT_DOMAIN_ID == domain_id) {
+  if (RCL_DEFAULT_DOMAIN_ID != node->impl->options.domain_id) {
+    domain_id = node->impl->options.domain_id;
+  } else if (RCL_DEFAULT_DOMAIN_ID !=
+    context->impl->init_options->impl->rmw_init_options.domain_id)
+  {
+    domain_id = context->impl->init_options->impl->rmw_init_options.domain_id;
+  } else {
     if (RCL_RET_OK != rcl_get_default_domain_id(&domain_id)) {
       goto fail;
+    } else if (RMW_DEFAULT_DOMAIN_ID == domain_id) {
+      domain_id = 0u;
     }
   }
-  if (RMW_DEFAULT_DOMAIN_ID == domain_id) {
-    domain_id = 0u;
-  }
+
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Using domain ID of '%zu'", domain_id);
   node->impl->actual_domain_id = domain_id;
 
