@@ -24,14 +24,20 @@ extern "C"
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/arguments.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/error_handling.h"
 #include "rcl/domain_id.h"
 #include "rcl/localhost.h"
+#ifdef RCL_LOGGING_ENABLED
 #include "rcl/logging.h"
 #include "rcl/logging_rosout.h"
+#endif // RCL_LOGGING_ENABLED
 #include "rcl/rcl.h"
+#ifdef RCL_COMMAND_LINE_ENABLED
 #include "rcl/remap.h"
+#endif // RCL_COMMAND_LINE_ENABLED
 #include "rcl/security.h"
 
 #include "rcutils/filesystem.h"
