@@ -46,7 +46,7 @@ extern "C"
 #include "./context_impl.h"
 #include "./init_options_impl.h"
 
-static atomic_uint_least64_t __rcl_next_unique_id = ATOMIC_VAR_INIT(1);
+// static atomic_uint_least64_t __rcl_next_unique_id = ATOMIC_VAR_INIT(1);
 
 rcl_ret_t
 rcl_init(
@@ -142,15 +142,19 @@ rcl_init(
 #endif // RCL_COMMAND_LINE_ENABLED
 
   // Set the instance id.
-  uint64_t next_instance_id = rcutils_atomic_fetch_add_uint64_t(&__rcl_next_unique_id, 1);
+  // uint64_t next_instance_id = rcutils_atomic_fetch_add_uint64_t(&__rcl_next_unique_id, 1);
+  static uint32_t next_instance_id = 0;
+  next_instance_id++;
   if (0 == next_instance_id) {
-    // Roll over occurred, this is an extremely unlikely occurrence.
-    RCL_SET_ERROR_MSG("unique rcl instance ids exhausted");
-    // Roll back to try to avoid the next call succeeding, but there's a data race here.
-    rcutils_atomic_store(&__rcl_next_unique_id, -1);
-    goto fail;
+    next_instance_id++;
+    // // Roll over occurred, this is an extremely unlikely occurrence.
+    // RCL_SET_ERROR_MSG("unique rcl instance ids exhausted");
+    // // Roll back to try to avoid the next call succeeding, but there's a data race here.
+    // rcutils_atomic_store(&__rcl_next_unique_id, -1);
+    // goto fail;
   }
-  rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), next_instance_id);
+  // rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), next_instance_id);
+  context->impl->instance_id_storage = next_instance_id;
   context->impl->init_options.impl->rmw_init_options.instance_id = next_instance_id;
 
   size_t * domain_id = &context->impl->init_options.impl->rmw_init_options.domain_id;
@@ -261,7 +265,8 @@ rcl_shutdown(rcl_context_t * context)
   }
 
   // reset the instance id to 0 to indicate "invalid"
-  rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), 0);
+  // rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), 0);
+  context->instance_id_storage = 0;
 
   return RCL_RET_OK;
 }
