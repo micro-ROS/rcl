@@ -154,7 +154,7 @@ rcl_init(
     // goto fail;
   }
   // rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), next_instance_id);
-  context->impl->instance_id_storage = next_instance_id;
+  context->instance_id_storage = next_instance_id;
   context->impl->init_options.impl->rmw_init_options.instance_id = next_instance_id;
 
   size_t * domain_id = &context->impl->init_options.impl->rmw_init_options.domain_id;
