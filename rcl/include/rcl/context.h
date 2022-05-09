@@ -121,12 +121,6 @@ typedef struct rcl_context_t
   // The assumption that this is big enough for an atomic_uint_least64_t is
   // ensured with a static_assert in the context.c file.
   // In most cases it should just be a plain uint64_t.
-<<<<<<< HEAD
-#if !defined(RCL_CONTEXT_ATOMIC_INSTANCE_ID_STORAGE_SIZE)
-#define RCL_CONTEXT_ATOMIC_INSTANCE_ID_STORAGE_SIZE sizeof(uint_least64_t)
-#endif
-=======
->>>>>>> 32aa288 (Avoid uint64_t operation when handling context (#16))
   /// Private storage for instance ID atomic.
   /**
    * Accessing the instance id should be done using the function
