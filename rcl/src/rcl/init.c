@@ -142,14 +142,6 @@ rcl_init(
   // Set the instance id.
   static uint32_t next_instance_id = 0;
   next_instance_id++;
-  if (0 == next_instance_id) {
-    next_instance_id++;
-    // // Roll over occurred, this is an extremely unlikely occurrence.
-    // RCL_SET_ERROR_MSG("unique rcl instance ids exhausted");
-    // // Roll back to try to avoid the next call succeeding, but there's a data race here.
-    // rcutils_atomic_store(&__rcl_next_unique_id, -1);
-    // goto fail;
-  }
   context->instance_id_storage = next_instance_id;
   context->impl->init_options.impl->rmw_init_options.instance_id = next_instance_id;
 
