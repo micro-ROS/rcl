@@ -142,6 +142,10 @@ rcl_init(
   // Set the instance id.
   static uint32_t next_instance_id = 0;
   next_instance_id++;
+  if (0 == next_instance_id) {
+    // Avoid invalid value on roll over
+    next_instance_id++;
+  }
   context->instance_id_storage = next_instance_id;
   context->impl->init_options.impl->rmw_init_options.instance_id = next_instance_id;
 
