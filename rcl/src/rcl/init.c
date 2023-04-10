@@ -27,21 +27,25 @@ extern "C"
 
 #include "tracetools/tracetools.h"
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/arguments.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/discovery_options.h"
 #include "rcl/domain_id.h"
 #include "rcl/error_handling.h"
 #include "rcl/localhost.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/logging.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/security.h"
 #include "rcl/validate_enclave_name.h"
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "./arguments_impl.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #include "./common.h"
 #include "./context_impl.h"
 #include "./init_options_impl.h"
-
-static atomic_uint_least64_t __rcl_next_unique_id = ATOMIC_VAR_INIT(1);
 
 rcl_ret_t
 rcl_init(
@@ -81,8 +85,10 @@ rcl_init(
     return RCL_RET_ALREADY_INIT;
   }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   // Zero initialize global arguments.
   context->global_arguments = rcl_get_zero_initialized_arguments();
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   // Setup impl for context.
   // use zero_allocate so the cleanup function will not try to clean up uninitialized parts later
@@ -124,6 +130,7 @@ rcl_init(
     }
   }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   // Parse the ROS specific arguments.
   ret = rcl_parse_arguments(argc, argv, allocator, &context->global_arguments);
   if (RCL_RET_OK != ret) {
@@ -131,17 +138,16 @@ rcl_init(
     RCUTILS_LOG_ERROR_NAMED(ROS_PACKAGE_NAME, "Failed to parse global arguments");
     goto fail;
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   // Set the instance id.
-  uint64_t next_instance_id = rcutils_atomic_fetch_add_uint64_t(&__rcl_next_unique_id, 1);
+  static uint32_t next_instance_id = 0;
+  next_instance_id++;
   if (0 == next_instance_id) {
-    // Roll over occurred, this is an extremely unlikely occurrence.
-    RCL_SET_ERROR_MSG("unique rcl instance ids exhausted");
-    // Roll back to try to avoid the next call succeeding, but there's a data race here.
-    rcutils_atomic_store(&__rcl_next_unique_id, -1);
-    goto fail;
+    // Avoid invalid value on roll over
+    next_instance_id++;
   }
-  rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), next_instance_id);
+  context->instance_id_storage = next_instance_id;
   context->impl->init_options.impl->rmw_init_options.instance_id = next_instance_id;
 
   size_t * domain_id = &context->impl->init_options.impl->rmw_init_options.domain_id;
@@ -256,6 +262,7 @@ rcl_init(
       "\t%s", discovery_options->static_peers[ii].peer_address);
   }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   if (context->global_arguments.impl->enclave) {
     context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
       context->global_arguments.impl->enclave,
@@ -270,6 +277,7 @@ rcl_init(
     fail_ret = RCL_RET_BAD_ALLOC;
     goto fail;
   }
+#endif //RCL_MICROROS
 
   int validation_result;
   size_t invalid_index;
@@ -341,7 +349,7 @@ rcl_shutdown(rcl_context_t * context)
   }
 
   // reset the instance id to 0 to indicate "invalid"
-  rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), 0);
+  context->instance_id_storage = 0;
 
   return RCL_RET_OK;
 }
