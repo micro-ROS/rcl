@@ -30,16 +30,12 @@ rcl_get_zero_initialized_context(void)
 {
   static rcl_context_t context = {
     .impl = NULL,
-    .instance_id_storage = {0},
+    .instance_id_storage = 0,
   };
   // this is not constexpr so it cannot be in the struct initialization
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   context.global_arguments = rcl_get_zero_initialized_arguments();
-  // ensure assumption about static storage
-  static_assert(
-    sizeof(context.instance_id_storage) >= sizeof(atomic_uint_least64_t),
-    "expected rcl_context_t's instance id storage to be >= size of atomic_uint_least64_t");
-  // initialize atomic
-  atomic_init((atomic_uint_least64_t *)(&context.instance_id_storage), 0);
+#endif // RCL_MICROROS_COMPLETE_IMPL
   return context;
 }
 
@@ -76,7 +72,7 @@ rcl_context_instance_id_t
 rcl_context_get_instance_id(const rcl_context_t * context)
 {
   RCL_CHECK_ARGUMENT_FOR_NULL(context, 0);
-  return rcutils_atomic_load_uint64_t((atomic_uint_least64_t *)(&context->instance_id_storage));
+  return context->instance_id_storage;
 }
 
 rcl_ret_t
@@ -110,8 +106,9 @@ __cleanup_context(rcl_context_t * context)
 {
   rcl_ret_t ret = RCL_RET_OK;
   // reset the instance id to 0 to indicate "invalid" (should already be 0, but this is defensive)
-  rcutils_atomic_store((atomic_uint_least64_t *)(&context->instance_id_storage), 0);
+  context->instance_id_storage = 0;
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   // clean up global_arguments if initialized
   if (NULL != context->global_arguments.impl) {
     ret = rcl_arguments_fini(&(context->global_arguments));
@@ -124,6 +121,7 @@ __cleanup_context(rcl_context_t * context)
       rcl_reset_error();
     }
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   // if impl is null, nothing else can be cleaned up
   if (NULL != context->impl) {
