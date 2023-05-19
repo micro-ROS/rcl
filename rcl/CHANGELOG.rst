@@ -2,15 +2,10 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6.1.1 (2023-05-11)
-------------------
-* clarify `rcl_node_init` return code (`#1066 <https://github.com/ros2/rcl/issues/1066>`_)
-* Contributors: Eric W
-
-6.1.0 (2023-04-28)
-------------------
-* Fix a format-security warning when building with clang. (`#1064 <https://github.com/ros2/rcl/issues/1064>`_)
-* Contributors: Chris Lalancette
+Forthcoming
+-----------
+* Honor ROS_LOCALHOST_ONLY if enabled. (`#1071 <https://github.com/ros2/rcl/issues/1071>`_)
+* Contributors: Tomoya Fujita
 
 6.0.1 (2023-04-18)
 ------------------
