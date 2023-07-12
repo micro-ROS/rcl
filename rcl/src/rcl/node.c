@@ -679,14 +679,14 @@ rcl_ret_t rcl_node_type_description_service_init(rcl_node_t * node)
     type_support, service_name, &service_ops);
   allocator.deallocate(service_name, allocator.state);
   return ret;
-#else
-  return RCL_RET_OK;
-#endif //RCL_MICROROS
+// #else
+//   return RCL_RET_OK;
+// #endif //RCL_MICROROS
 }
 
 rcl_ret_t rcl_node_type_description_service_fini(rcl_node_t * node)
 {
-#ifdef RCL_MICROROS_COMPLETE_IMPL
+// #ifdef RCL_MICROROS_COMPLETE_IMPL
   RCL_CHECK_ARGUMENT_FOR_NULL(node, RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_ARGUMENT_FOR_NULL(node->impl, RCL_RET_NODE_INVALID);
   if (!rcl_service_is_valid(&node->impl->get_type_description_service)) {
