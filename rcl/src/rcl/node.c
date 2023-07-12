@@ -33,8 +33,8 @@ extern "C"
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/logging.h"
 #include "rcl/logging_rosout.h"
-#include "rcl/node_type_cache.h"
 #endif // RCL_MICROROS_COMPLETE_IMPL
+#include "rcl/node_type_cache.h"
 #include "rcl/rcl.h"
 #include "rcl/remap.h"
 #include "rcl/security.h"
@@ -580,7 +580,7 @@ void rcl_node_type_description_service_handle_request(
   const type_description_interfaces__srv__GetTypeDescription_Request * request,
   type_description_interfaces__srv__GetTypeDescription_Response * response)
 {
-#ifdef RCL_MICROROS_COMPLETE_IMPL
+// #ifdef RCL_MICROROS_COMPLETE_IMPL
   rcl_type_info_t type_info;
   RCL_CHECK_FOR_NULL_WITH_MSG(node, "invalid node handle", return;);
   RCL_CHECK_FOR_NULL_WITH_MSG(node->impl, "invalid node", return;);
@@ -639,12 +639,12 @@ void rcl_node_type_description_service_handle_request(
   }
 
   response->successful = true;
-#endif //RCL_MICROROS
+// #endif //RCL_MICROROS
 }
 
 rcl_ret_t rcl_node_type_description_service_init(rcl_node_t * node)
 {
-#ifdef RCL_MICROROS_COMPLETE_IMPL
+// #ifdef RCL_MICROROS_COMPLETE_IMPL
   RCL_CHECK_ARGUMENT_FOR_NULL(node, RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_ARGUMENT_FOR_NULL(node->impl, RCL_RET_NODE_INVALID);
 
@@ -701,16 +701,16 @@ rcl_ret_t rcl_node_type_description_service_fini(rcl_node_t * node)
   }
 
   return ret;
-#else
-  return RCL_RET_OK;
-#endif //RCL_MICROROS
+// #else
+//   return RCL_RET_OK;
+// #endif //RCL_MICROROS
 }
 
 rcl_ret_t rcl_node_get_type_description_service(
   const rcl_node_t * node,
   rcl_service_t ** service_out)
 {
-#ifdef RCL_MICROROS_COMPLETE_IMPL
+// #ifdef RCL_MICROROS_COMPLETE_IMPL
   RCL_CHECK_ARGUMENT_FOR_NULL(node, RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_ARGUMENT_FOR_NULL(node->impl, RCL_RET_NODE_INVALID);
   RCL_CHECK_ARGUMENT_FOR_NULL(service_out, RCL_RET_SERVICE_INVALID);
@@ -720,8 +720,8 @@ rcl_ret_t rcl_node_get_type_description_service(
   }
 
   *service_out = &node->impl->get_type_description_service;
-#endif
-  return RCL_RET_OK;
+// #endif
+//   return RCL_RET_OK;
 }
 
 #ifdef __cplusplus
