@@ -26,8 +26,10 @@ extern "C"
 #include "rcl_action/types.h"
 #include "rcl_action/wait.h"
 
-#include "rcl/error_handling.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
+#include "rcl/error_handling.h"
 #include "rcl/rcl.h"
 #include "rcl/time.h"
 
@@ -195,6 +197,7 @@ rcl_action_server_init(
     goto fail;
   }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   // Store type hash
   if (RCL_RET_OK != rcl_node_type_cache_register_type(
       node, type_support->get_type_hash_func(type_support),
@@ -205,8 +208,8 @@ rcl_action_server_init(
     RCL_SET_ERROR_MSG("Failed to register type for action");
     goto fail;
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
   action_server->impl->type_hash = *type_support->get_type_hash_func(type_support);
-
   return ret;
 fail:
   {
@@ -264,12 +267,15 @@ rcl_action_server_fini(rcl_action_server_t * action_server, rcl_node_t * node)
     }
     allocator.deallocate(action_server->impl->goal_handles, allocator.state);
     action_server->impl->goal_handles = NULL;
+
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (
       ROSIDL_TYPE_HASH_VERSION_UNSET != action_server->impl->type_hash.version &&
       RCL_RET_OK != rcl_node_type_cache_unregister_type(node, &action_server->impl->type_hash))
     {
       ret = RCL_RET_ERROR;
     }
+#endif // RCL_MICROROS_COMPLETE_IMPL
     // Deallocate struct
     allocator.deallocate(action_server->impl, allocator.state);
     action_server->impl = NULL;

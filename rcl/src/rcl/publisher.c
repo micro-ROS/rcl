@@ -25,7 +25,9 @@ extern "C"
 #include "rcl/allocator.h"
 #include "rcl/error_handling.h"
 #include "rcl/node.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #include "rcutils/logging_macros.h"
 #include "rcutils/macros.h"
 #include "rcl/time.h"
@@ -128,7 +130,7 @@ rcl_publisher_init(
     options->qos.avoid_ros_namespace_conventions;
   // options
   publisher->impl->options = *options;
-
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   if (RCL_RET_OK != rcl_node_type_cache_register_type(
       node, type_support->get_type_hash_func(type_support),
       type_support->get_type_description_func(type_support),
@@ -138,6 +140,7 @@ rcl_publisher_init(
     RCL_SET_ERROR_MSG("Failed to register type for subscription");
     goto fail;
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
   publisher->impl->type_hash = *type_support->get_type_hash_func(type_support);
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Publisher initialized");
@@ -201,6 +204,7 @@ rcl_publisher_fini(rcl_publisher_t * publisher, rcl_node_t * node)
       RCL_SET_ERROR_MSG(rmw_get_error_string().str);
       result = RCL_RET_ERROR;
     }
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (
       ROSIDL_TYPE_HASH_VERSION_UNSET != publisher->impl->type_hash.version &&
       RCL_RET_OK != rcl_node_type_cache_unregister_type(node, &publisher->impl->type_hash))
@@ -208,6 +212,7 @@ rcl_publisher_fini(rcl_publisher_t * publisher, rcl_node_t * node)
       RCUTILS_SAFE_FWRITE_TO_STDERR(rcl_get_error_string().str);
       result = RCL_RET_ERROR;
     }
+#endif // RCL_MICROROS_COMPLETE_IMPL
     allocator.deallocate(publisher->impl, allocator.state);
     publisher->impl = NULL;
   }

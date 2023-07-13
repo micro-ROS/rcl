@@ -24,7 +24,9 @@ extern "C"
 
 #include "rcl/error_handling.h"
 #include "rcl/node.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/publisher.h"
 #include "rcl/time.h"
 #include "rcutils/logging_macros.h"
@@ -177,7 +179,7 @@ rcl_client_init(
   // options
   client->impl->options = *options;
   atomic_init(&client->impl->sequence_number, 0);
-
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   if (RCL_RET_OK != rcl_node_type_cache_register_type(
       node, type_support->get_type_hash_func(type_support),
       type_support->get_type_description_func(type_support),
@@ -188,6 +190,7 @@ rcl_client_init(
     ret = RCL_RET_ERROR;
     goto destroy_client;
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
   client->impl->type_hash = *type_support->get_type_hash_func(type_support);
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Client initialized");
@@ -250,7 +253,7 @@ rcl_client_fini(rcl_client_t * client, rcl_node_t * node)
       RCL_SET_ERROR_MSG(rmw_get_error_string().str);
       result = RCL_RET_ERROR;
     }
-
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (
       ROSIDL_TYPE_HASH_VERSION_UNSET != client->impl->type_hash.version &&
       RCL_RET_OK != rcl_node_type_cache_unregister_type(node, &client->impl->type_hash))
@@ -258,7 +261,7 @@ rcl_client_fini(rcl_client_t * client, rcl_node_t * node)
       RCUTILS_SAFE_FWRITE_TO_STDERR(rcl_get_error_string().str);
       result = RCL_RET_ERROR;
     }
-
+#endif // RCL_MICROROS_COMPLETE_IMPL
     allocator.deallocate(client->impl->remapped_service_name, allocator.state);
     client->impl->remapped_service_name = NULL;
 
