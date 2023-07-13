@@ -210,6 +210,7 @@ rcl_action_server_init(
   }
 #endif // RCL_MICROROS_COMPLETE_IMPL
   action_server->impl->type_hash = *type_support->get_type_hash_func(type_support);
+
   return ret;
 fail:
   {
