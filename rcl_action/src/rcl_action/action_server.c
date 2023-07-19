@@ -162,7 +162,9 @@ rcl_action_server_init(
   action_server->impl->goal_handles = NULL;
   action_server->impl->num_goal_handles = 0u;
   action_server->impl->clock = NULL;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   action_server->impl->type_hash = rosidl_get_zero_initialized_type_hash();
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   rcl_ret_t ret = RCL_RET_OK;
   // Initialize services
@@ -208,8 +210,8 @@ rcl_action_server_init(
     RCL_SET_ERROR_MSG("Failed to register type for action");
     goto fail;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
   action_server->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   return ret;
 fail:

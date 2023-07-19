@@ -50,7 +50,9 @@ struct rcl_service_impl_s
   rmw_service_t * rmw_handle;
   rcl_service_event_publisher_t * service_event_publisher;
   char * remapped_service_name;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   rosidl_type_hash_t type_hash;
+#endif // RCL_MICROROS_COMPLETE_IMPL
 };
 
 rcl_service_t
@@ -201,8 +203,8 @@ rcl_service_init(
     ret = RCL_RET_ERROR;
     goto destroy_service;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
   service->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Service initialized");
   TRACEPOINT(

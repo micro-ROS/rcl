@@ -51,7 +51,9 @@ struct rcl_client_impl_s
   atomic_int_least64_t sequence_number;
   rcl_service_event_publisher_t * service_event_publisher;
   char * remapped_service_name;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   rosidl_type_hash_t type_hash;
+#endif // RCL_MICROROS_COMPLETE_IMPL
 };
 
 rcl_client_t
@@ -190,8 +192,8 @@ rcl_client_init(
     ret = RCL_RET_ERROR;
     goto destroy_client;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
   client->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Client initialized");
   TRACEPOINT(

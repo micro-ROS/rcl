@@ -136,8 +136,8 @@ rcl_subscription_init(
     RCL_SET_ERROR_MSG("Failed to register type for subscription");
     goto fail;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
   subscription->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Subscription initialized");
   ret = RCL_RET_OK;

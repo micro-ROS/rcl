@@ -208,8 +208,10 @@ rcl_node_init(
   node->impl->logger_name = NULL;
   node->impl->fq_name = NULL;
   node->impl->options = rcl_node_get_default_options();
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   node->impl->registered_types_by_type_hash = rcutils_get_zero_initialized_hash_map();
   node->impl->get_type_description_service = rcl_get_zero_initialized_service();
+#endif // RCL_MICROROS_COMPLETE_IMPL
   node->context = context;
   // Initialize node impl.
   ret = rcl_node_options_copy(options, &(node->impl->options));
@@ -625,6 +627,7 @@ void rcl_node_type_description_service_handle_request(
 
 rcl_ret_t rcl_node_type_description_service_init(rcl_node_t * node)
 {
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   RCL_CHECK_ARGUMENT_FOR_NULL(node, RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_ARGUMENT_FOR_NULL(node->impl, RCL_RET_NODE_INVALID);
 
@@ -660,10 +663,15 @@ rcl_ret_t rcl_node_type_description_service_init(rcl_node_t * node)
   allocator.deallocate(service_name, allocator.state);
 
   return ret;
+#else
+  (void)node;
+  return RCL_RET_UNSUPPORTED;
+#endif //RCL_MICROROS
 }
 
 rcl_ret_t rcl_node_type_description_service_fini(rcl_node_t * node)
 {
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   RCL_CHECK_ARGUMENT_FOR_NULL(node, RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_ARGUMENT_FOR_NULL(node->impl, RCL_RET_NODE_INVALID);
   if (!rcl_service_is_valid(&node->impl->get_type_description_service)) {
@@ -678,12 +686,17 @@ rcl_ret_t rcl_node_type_description_service_fini(rcl_node_t * node)
   }
 
   return ret;
+#else
+  (void)node;
+  return RCL_RET_UNSUPPORTED;
+#endif //RCL_MICROROS
 }
 
 rcl_ret_t rcl_node_get_type_description_service(
   const rcl_node_t * node,
   rcl_service_t ** service_out)
 {
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   RCL_CHECK_ARGUMENT_FOR_NULL(node, RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_ARGUMENT_FOR_NULL(node->impl, RCL_RET_NODE_INVALID);
   RCL_CHECK_ARGUMENT_FOR_NULL(service_out, RCL_RET_SERVICE_INVALID);
@@ -694,6 +707,11 @@ rcl_ret_t rcl_node_get_type_description_service(
 
   *service_out = &node->impl->get_type_description_service;
   return RCL_RET_OK;
+#else
+  (void)node;
+  (void)service_out;
+  return RCL_RET_UNSUPPORTED;
+#endif //RCL_MICROROS
 }
 
 #ifdef __cplusplus

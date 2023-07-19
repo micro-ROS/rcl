@@ -67,7 +67,9 @@ _rcl_action_get_zero_initialized_client_impl(void)
     0,
     0,
     0,
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     rosidl_get_zero_initialized_type_hash()
+#endif // RCL_MICROROS_COMPLETE_IMPL
   };
   return null_action_client;
 }
@@ -244,8 +246,8 @@ rcl_action_client_init(
     RCL_SET_ERROR_MSG("Failed to register type for action");
     goto fail;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
   action_client->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Action client initialized");
   return ret;
