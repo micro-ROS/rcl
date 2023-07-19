@@ -23,8 +23,10 @@ extern "C"
 
 #include "rcl/error_handling.h"
 #include "rcl/node.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
 #include "rcutils/env.h"
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #include "rcutils/logging_macros.h"
 #include "rcutils/strdup.h"
 #include "rcutils/types/string_array.h"
@@ -124,7 +126,7 @@ rcl_subscription_init(
     options->qos.avoid_ros_namespace_conventions;
   // options
   subscription->impl->options = *options;
-
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   if (RCL_RET_OK != rcl_node_type_cache_register_type(
       node, type_support->get_type_hash_func(type_support),
       type_support->get_type_description_func(type_support),
@@ -134,6 +136,7 @@ rcl_subscription_init(
     RCL_SET_ERROR_MSG("Failed to register type for subscription");
     goto fail;
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
   subscription->impl->type_hash = *type_support->get_type_hash_func(type_support);
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Subscription initialized");
@@ -206,7 +209,7 @@ rcl_subscription_fini(rcl_subscription_t * subscription, rcl_node_t * node)
       RCUTILS_SAFE_FWRITE_TO_STDERR("\n");
       result = RCL_RET_ERROR;
     }
-
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (
       ROSIDL_TYPE_HASH_VERSION_UNSET != subscription->impl->type_hash.version &&
       RCL_RET_OK != rcl_node_type_cache_unregister_type(node, &subscription->impl->type_hash))
@@ -215,7 +218,7 @@ rcl_subscription_fini(rcl_subscription_t * subscription, rcl_node_t * node)
       RCUTILS_SAFE_FWRITE_TO_STDERR("\n");
       result = RCL_RET_ERROR;
     }
-
+#endif // RCL_MICROROS_COMPLETE_IMPL
     allocator.deallocate(subscription->impl, allocator.state);
     subscription->impl = NULL;
   }
@@ -238,6 +241,7 @@ rcl_subscription_get_default_options()
   // more information than that function provides.
   default_options.disable_loaned_message = true;
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   const char * env_val = NULL;
   const char * env_error_str = rcutils_get_env(RCL_DISABLE_LOANED_MESSAGES_ENV_VAR, &env_val);
   if (NULL != env_error_str) {
@@ -248,6 +252,7 @@ rcl_subscription_get_default_options()
   } else {
     default_options.disable_loaned_message = !(strcmp(env_val, "0") == 0);
   }
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
   return default_options;
 }
