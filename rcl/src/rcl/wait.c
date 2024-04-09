@@ -558,7 +558,13 @@ rcl_wait(rcl_wait_set_t * wait_set, int64_t timeout)
   }
 
   int64_t min_next_call_time[RCL_STEADY_TIME + 1];
-  rcl_clock_t * clocks[RCL_STEADY_TIME + 1] = {0, 0, 0, 0};
+  rcl_clock_t * clocks[RCL_STEADY_TIME + 1] = {NULL, NULL, NULL, NULL};
+
+  // asserts to make sure nobody changes the ordering of RCL_ROS_TIME,
+  // RCL_SYSTEM_TIME and RCL_STEADY_TIME
+  static_assert(RCL_ROS_TIME < RCL_STEADY_TIME + 1, "RCL_ROS_TIME won't fit in the array");
+  static_assert(RCL_SYSTEM_TIME < RCL_STEADY_TIME + 1, "RCL_SYSTEM_TIME won't fit in the array");
+  static_assert(RCL_STEADY_TIME < RCL_STEADY_TIME + 1, "RCL_STEADY_TIME won't fit in the array");
 
   min_next_call_time[RCL_ROS_TIME] = INT64_MAX;
   min_next_call_time[RCL_SYSTEM_TIME] = INT64_MAX;
@@ -626,12 +632,12 @@ rcl_wait(rcl_wait_set_t * wait_set, int64_t timeout)
     temporary_timeout_storage.nsec = 0;
     timeout_argument = &temporary_timeout_storage;
   } else {
-    int64_t min_timeout = timeout > 0 ? timeout : INT64_MAX;
     bool has_valid_timeout = timeout > 0;
+    int64_t min_timeout = has_valid_timeout ? timeout : INT64_MAX;
 
     // determine the min timeout of all clocks
     for (size_t i = RCL_ROS_TIME; i <= RCL_STEADY_TIME; i++) {
-      if (clocks[i] == 0) {
+      if (clocks[i] == NULL) {
         continue;
       }
 
@@ -673,7 +679,7 @@ rcl_wait(rcl_wait_set_t * wait_set, int64_t timeout)
   // Items that are not ready will have been set to NULL by rmw_wait.
   // We now update our handles accordingly.
 
-  bool timer_is_ready = false;
+  bool any_timer_is_ready = false;
 
   // Check for ready timers
   // and set not ready timers (which includes canceled timers) to NULL.
@@ -683,15 +689,15 @@ rcl_wait(rcl_wait_set_t * wait_set, int64_t timeout)
       continue;
     }
 
-    bool is_ready = false;
-    rcl_ret_t ret = rcl_timer_is_ready(wait_set->timers[i], &is_ready);
+    bool current_timer_is_ready = false;
+    rcl_ret_t ret = rcl_timer_is_ready(wait_set->timers[i], &current_timer_is_ready);
     if (ret != RCL_RET_OK) {
       return ret;  // The rcl error state should already be set.
     }
-    if (!is_ready) {
+    if (!current_timer_is_ready) {
       wait_set->timers[i] = NULL;
     } else {
-      timer_is_ready = true;
+      any_timer_is_ready = true;
     }
   }
   // Check for timeout, return RCL_RET_TIMEOUT only if it wasn't a timer.
@@ -735,7 +741,7 @@ rcl_wait(rcl_wait_set_t * wait_set, int64_t timeout)
     }
   }
 
-  if (RMW_RET_TIMEOUT == ret && !timer_is_ready) {
+  if (RMW_RET_TIMEOUT == ret && !any_timer_is_ready) {
     return RCL_RET_TIMEOUT;
   }
   return RCL_RET_OK;
