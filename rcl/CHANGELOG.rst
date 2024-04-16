@@ -2,6 +2,41 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.2.1 (2024-04-16)
+------------------
+* chore: Minor style improvements (`#1147 <https://github.com/ros2/rcl/issues/1147>`_)
+  Co-authored-by: Janosch Machowinski <J.Machowinski@cellumation.com>
+* improved rcl_wait in the area of timeout computation and spurious wakeups (`#1146 <https://github.com/ros2/rcl/issues/1146>`_)
+  Added special handling for timers with a clock that has time override
+  enabled. For these timer we should not compute a timeout, as the waitset
+  is waken up by the associated guard condition.
+  Before this change, the waitset could wait up, because of an expected ready
+  timer, that was acutally not ready, as the time update to the ROS_TIME had
+  not yet arrived.
+* Add tracepoint for publish_serialized_publish (`#1136 <https://github.com/ros2/rcl/issues/1136>`_)
+  * Add tracepoint for publish_serialized_publish
+  * Add: tracepoint for rcl_take_serialized_message
+  ---------
+* Revert "improved rcl_wait in the area of timeout computation and spurious wakeups (`#1135 <https://github.com/ros2/rcl/issues/1135>`_)" (`#1142 <https://github.com/ros2/rcl/issues/1142>`_)
+  This reverts commit 3c6c5dc47dac23d70722a60b2c0a387d2e71b71d.
+* improved rcl_wait in the area of timeout computation and spurious wakeups (`#1135 <https://github.com/ros2/rcl/issues/1135>`_)
+  * feat: Allow usage of rcl_timer_clock with const rcl_timer_t*
+  * fix: Fixed purious wake-ups on ROS_TIME timers with ROS_TIME enabled
+  Added special handling for timers with a clock that has time override
+  enabled. For theses timer we should not compute a timeout, as the waitset
+  is waken up by the associated guard condition.
+  Before this change, the waitset could wait up, because of an expected ready
+  timer, that was acutally not ready, as the time update to the ROS_TIME had
+  not yet arrived.
+  * feat: Added rcl_timer_get_next_call_time
+  * fix(rcl_wait): Improved timeout computation in case of many timers
+  This commit changes the computation of the timer timeout, to be more
+  precise, in the case, of many registered timers.
+  ---------
+  Co-authored-by: Janosch Machowinski <j.machowinski@nospam.org>
+* Generate version header using ament_generate_version_header(..) (`#1141 <https://github.com/ros2/rcl/issues/1141>`_)
+* Contributors: Chris Lalancette, G.A. vd. Hoorn, h-suzuki-isp, jmachowinski
+
 9.2.0 (2024-03-28)
 ------------------
 * Add rcl_timer_call_with_info function that retrieves the expected and the actual timer trigger times (`#1113 <https://github.com/ros2/rcl/issues/1113>`_)

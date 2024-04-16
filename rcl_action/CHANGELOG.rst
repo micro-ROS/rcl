@@ -2,6 +2,11 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.2.1 (2024-04-16)
+------------------
+* Generate version header using ament_generate_version_header(..) (`#1141 <https://github.com/ros2/rcl/issues/1141>`_)
+* Contributors: G.A. vd. Hoorn
+
 9.2.0 (2024-03-28)
 ------------------
 * add RCL_RET_TIMEOUT to action service response. (`#1138 <https://github.com/ros2/rcl/issues/1138>`_)
