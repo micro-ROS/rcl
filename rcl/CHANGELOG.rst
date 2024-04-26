@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed warnings - strict-prototypes (`#1148 <https://github.com/ros2/rcl/issues/1148>`_)
+* Contributors: Alejandro Hernández Cordero
+
 9.2.1 (2024-04-16)
 ------------------
 * chore: Minor style improvements (`#1147 <https://github.com/ros2/rcl/issues/1147>`_)
