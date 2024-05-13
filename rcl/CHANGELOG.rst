@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.2.3 (2024-05-13)
+------------------
 * Fix up rmw_cyclonedds timestamp testing. (`#1156 <https://github.com/ros2/rcl/issues/1156>`_) (`#1157 <https://github.com/ros2/rcl/issues/1157>`_)
   We are about to fix it so that rmw_cyclonedds has receive_timestamp
   support, so we also need to enable that support here
