@@ -2,6 +2,11 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.8 (2024-05-15)
+------------------
+* add RCL_RET_TIMEOUT to action service response. (`#1138 <https://github.com/ros2/rcl/issues/1138>`_) (`#1153 <https://github.com/ros2/rcl/issues/1153>`_)
+* Contributors: mergify[bot]
+
 5.3.7 (2024-01-24)
 ------------------
 
