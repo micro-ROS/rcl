@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 project(rcl)
 
 find_package(ament_cmake_ros REQUIRED)
+find_package(ament_cmake_gen_version_h REQUIRED)
 
 find_package(rcl_interfaces REQUIRED)
 find_package(rcl_logging_interface REQUIRED)
@@ -121,6 +122,7 @@ ament_export_dependencies(rcutils)
 ament_export_dependencies(${RCL_LOGGING_IMPL})
 ament_export_dependencies(rosidl_runtime_c)
 ament_export_dependencies(tracetools)
+ament_generate_version_header(${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
