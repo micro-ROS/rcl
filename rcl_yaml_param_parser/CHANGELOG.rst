@@ -2,8 +2,8 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.4.0 (2024-06-17)
+------------------
 * Add 'mimick' label to tests which use Mimick (`#1152 <https://github.com/ros2/rcl/issues/1152>`_)
 * Contributors: Scott K Logan
 

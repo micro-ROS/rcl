@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.4.0 (2024-06-17)
+------------------
 * Add mechanism to disable workaround for dependency groups (`#1151 <https://github.com/ros2/rcl/issues/1151>`_)
 * remap_impl: minor typo (`#1158 <https://github.com/ros2/rcl/issues/1158>`_)
 * Fix up rmw_cyclonedds timestamp testing. (`#1156 <https://github.com/ros2/rcl/issues/1156>`_)
