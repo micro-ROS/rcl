@@ -2,6 +2,14 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add mechanism to disable workaround for dependency groups (`#1151 <https://github.com/ros2/rcl/issues/1151>`_)
+* remap_impl: minor typo (`#1158 <https://github.com/ros2/rcl/issues/1158>`_)
+* Fix up rmw_cyclonedds timestamp testing. (`#1156 <https://github.com/ros2/rcl/issues/1156>`_)
+* Add 'mimick' label to tests which use Mimick (`#1152 <https://github.com/ros2/rcl/issues/1152>`_)
+* Contributors: Chris Lalancette, G.A. vd. Hoorn, Scott K Logan
+
 9.3.0 (2024-04-26)
 ------------------
 * Fixed warnings - strict-prototypes (`#1148 <https://github.com/ros2/rcl/issues/1148>`_)
