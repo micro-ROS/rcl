@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+6.0.6 (2024-07-10)
+------------------
 * Fix up type_description tests. (`#1160 <https://github.com/ros2/rcl/issues/1160>`_)
 * Generate version header using `ament_generate_version_header(..)` (`#1144 <https://github.com/ros2/rcl/issues/1144>`_)
 * Contributors: Chris Lalancette,  G.A. vd. Hoorn, Tomoya.Fujita
