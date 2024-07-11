@@ -2,6 +2,11 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Generate version header using `ament_generate_version_header(..)` (`#1144 <https://github.com/ros2/rcl/issues/1144>`_)
+* Contributors: G.A. vd. Hoorn, Tomoya.Fujita
+
 6.0.5 (2024-02-07)
 ------------------
 * Fix for incorrect integer value conversion on Windows (`#1129 <https://github.com/ros2/rcl/issues/1129>`_)
