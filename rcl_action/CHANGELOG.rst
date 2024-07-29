@@ -2,6 +2,23 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.4.1 (2024-07-29)
+------------------
+* Increase the test_action_interaction timeouts. (`#1172 <https://github.com/ros2/rcl/issues/1172>`_)
+  While I can't reproduce the problem locally, I suspect that
+  waiting only 1 second for the entities to become ready isn't
+  enough in all cases, particularly on Windows, with Connext,
+  and when we are running in parallel with other tests.
+  Thus, increase the timeout for the rcl_wait() in all of the
+  test_action_interaction tests, which should hopefully be
+  enough to make this always pass.
+* Stop compiling rcl_action tests multiple times. (`#1165 <https://github.com/ros2/rcl/issues/1165>`_)
+  We don't need to compile the tests once for each RMW;
+  we can just compile it once and then use the RMW_IMPLEMENTATION
+  environment variable to run the tests on the different RMWs.
+  This speeds up compilation.
+* Contributors: Chris Lalancette
+
 9.4.0 (2024-06-17)
 ------------------
 

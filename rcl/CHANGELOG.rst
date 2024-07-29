@@ -2,6 +2,29 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.4.1 (2024-07-29)
+------------------
+* Removed deprecated localhost_only (`#1169 <https://github.com/ros2/rcl/issues/1169>`_)
+* Fix typo in rcl_validate_enclave_name_with_size() doc (`#1168 <https://github.com/ros2/rcl/issues/1168>`_)
+* Removed deprecated rcl_init_timer() (`#1167 <https://github.com/ros2/rcl/issues/1167>`_)
+* Cleanup test_count_matched test to handle non-DDS RMWs (`#1164 <https://github.com/ros2/rcl/issues/1164>`_)
+  * Make check_state a class method in test_count_matched.
+  This allows us to pass fewer parameters into each
+  each invocation, and allows us to hide some more of
+  the implementation inside the class.
+  * Rename "ops" to "opts" in test_count_matched.
+  It just better reflects what these structures are.
+  * Cleanup pub/subs with a scope_exit in test_count_matched.
+  This just ensures that they are always cleaned up, even
+  if we exit early.  Note that we specifically do *not*
+  use it for test_count_matched_functions, since the cleanup
+  is intentionally interleaved with other tests.
+  * Check with the RMW layer to see whether QoS is compatible.
+  Some RMWs may have different compatibility than DDS, so
+  check with the RMW layer to see what we should expect for
+  the number of publishers and subscriptions.
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Christophe Bedard
+
 9.4.0 (2024-06-17)
 ------------------
 * Add mechanism to disable workaround for dependency groups (`#1151 <https://github.com/ros2/rcl/issues/1151>`_)
