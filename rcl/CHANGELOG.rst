@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.2.4 (2024-09-19)
+------------------
 * Properly initialize the char array used in type hash calculations. (`#1182 <https://github.com/ros2/rcl/issues/1182>`_) (`#1183 <https://github.com/ros2/rcl/issues/1183>`_)
   Previously, we were zero initializing it and only setting
   up one of its fields.  But that doesn't totally properly
