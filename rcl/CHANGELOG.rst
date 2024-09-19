@@ -2,6 +2,18 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Properly initialize the char array used in type hash calculations. (`#1182 <https://github.com/ros2/rcl/issues/1182>`_) (`#1183 <https://github.com/ros2/rcl/issues/1183>`_)
+  Previously, we were zero initializing it and only setting
+  up one of its fields.  But that doesn't totally properly
+  initialize it; we really should call rcutils_char_array_init
+  to make sure everything is initialized.  Do that in the
+  live source, as well as in the test for it.
+  (cherry picked from commit bfe00f71b7056bb64b27a8d5f5bacefe0564c43e)
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Contributors: mergify[bot]
+
 9.2.3 (2024-05-13)
 ------------------
 * Fix up rmw_cyclonedds timestamp testing. (`#1156 <https://github.com/ros2/rcl/issues/1156>`_) (`#1157 <https://github.com/ros2/rcl/issues/1157>`_)
