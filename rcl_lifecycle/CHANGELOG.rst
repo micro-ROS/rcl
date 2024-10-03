@@ -2,8 +2,8 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.0.0 (2024-10-03)
+-------------------
 * Fix NULL allocator and racy condition. (`#1188 <https://github.com/ros2/rcl/issues/1188>`_)
 * Fix typo in rcl_lifecycle_com_interface_t doc (`#1174 <https://github.com/ros2/rcl/issues/1174>`_)
 * Contributors: Christophe Bedard, Tomoya Fujita
