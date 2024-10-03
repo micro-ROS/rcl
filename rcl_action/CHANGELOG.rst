@@ -2,6 +2,16 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Cleanup test_graph.cpp. (`#1193 <https://github.com/ros2/rcl/issues/1193>`_)
+* Expect a minimum of two nodes to be alive in test_graph (`#1192 <https://github.com/ros2/rcl/issues/1192>`_)
+* escalate RCL_RET_ACTION_xxx to 40XX. (`#1191 <https://github.com/ros2/rcl/issues/1191>`_)
+* Fix NULL allocator and racy condition. (`#1188 <https://github.com/ros2/rcl/issues/1188>`_)
+* Increased timeouts (`#1181 <https://github.com/ros2/rcl/issues/1181>`_)
+* Change the starting time of the goal expiration timeout (`#1121 <https://github.com/ros2/rcl/issues/1121>`_)
+* Contributors: Alejandro Hernández Cordero, Barry Xu, Chris Lalancette, Tomoya Fujita, Yadu
+
 9.4.1 (2024-07-29)
 ------------------
 * Increase the test_action_interaction timeouts. (`#1172 <https://github.com/ros2/rcl/issues/1172>`_)

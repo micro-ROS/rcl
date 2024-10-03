@@ -2,6 +2,20 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Cleanup test_graph.cpp. (`#1193 <https://github.com/ros2/rcl/issues/1193>`_)
+* Expect a minimum of two nodes to be alive in test_graph (`#1192 <https://github.com/ros2/rcl/issues/1192>`_)
+* escalate RCL_RET_ACTION_xxx to 40XX. (`#1191 <https://github.com/ros2/rcl/issues/1191>`_)
+* Fix NULL allocator and racy condition. (`#1188 <https://github.com/ros2/rcl/issues/1188>`_)
+* Properly initialize the char array used in type hash calculations. (`#1182 <https://github.com/ros2/rcl/issues/1182>`_)
+* Increased timeouts (`#1181 <https://github.com/ros2/rcl/issues/1181>`_)
+* Skip some event tests on rmw_zenoh (`#1180 <https://github.com/ros2/rcl/issues/1180>`_)
+* doc: rcl_logging_spdlog is the default impl. (`#1177 <https://github.com/ros2/rcl/issues/1177>`_)
+* Update wait.h documentation for rcl_wait (`#1176 <https://github.com/ros2/rcl/issues/1176>`_)
+* Change the starting time of the goal expiration timeout (`#1121 <https://github.com/ros2/rcl/issues/1121>`_)
+* Contributors: Alejandro Hernández Cordero, Barry Xu, Chris Lalancette, Felix Penzlin, Tomoya Fujita, Yadu
+
 9.4.1 (2024-07-29)
 ------------------
 * Removed deprecated localhost_only (`#1169 <https://github.com/ros2/rcl/issues/1169>`_)
