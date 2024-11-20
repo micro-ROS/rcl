@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.0.1 (2024-11-20)
+-------------------
 * Make the event skipping more generic. (`#1197 <https://github.com/ros2/rcl/issues/1197>`_)
 * Heavy cleanup of test_events.cpp. (`#1196 <https://github.com/ros2/rcl/issues/1196>`_)
 * Contributors: Chris Lalancette
