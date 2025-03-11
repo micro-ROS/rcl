@@ -185,7 +185,10 @@ rcl_init(
     fail_ret = RCL_RET_BAD_ALLOC;
     goto fail;
   }
+<<<<<<< HEAD
 #endif //RCL_COMMAND_LINE_ENABLED
+=======
+>>>>>>> 7fbf5b9 (exclude rcl_validate_enclave_name and rcl_get_security_options_from_environment from micro-ROS (#24))
 
   int validation_result;
   size_t invalid_index;
@@ -217,6 +220,7 @@ rcl_init(
     fail_ret = ret;
     goto fail;
   }
+#endif //RCL_MICROROS
 
   // Initialize rmw_init.
   rmw_ret_t rmw_ret = rmw_init(
