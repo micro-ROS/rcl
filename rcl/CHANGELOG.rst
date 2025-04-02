@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.2.5 (2025-04-02)
+------------------
 * use rmw_event_type_is_supported (backport `#1214 <https://github.com/ros2/rcl/issues/1214>`_) (`#1215 <https://github.com/ros2/rcl/issues/1215>`_)
   * use rmw_event_type_is_supported (`#1214 <https://github.com/ros2/rcl/issues/1214>`_)
   (cherry picked from commit ddae02ffeff4f43c7b5f618aced78f7f1c3d9c1f)
