@@ -2,6 +2,16 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use rmw_event_type_is_supported (backport `#1214 <https://github.com/ros2/rcl/issues/1214>`_) (`#1215 <https://github.com/ros2/rcl/issues/1215>`_)
+  * use rmw_event_type_is_supported (`#1214 <https://github.com/ros2/rcl/issues/1214>`_)
+  (cherry picked from commit ddae02ffeff4f43c7b5f618aced78f7f1c3d9c1f)
+* Relieve timer test period not to miss the cycle. (`#1209 <https://github.com/ros2/rcl/issues/1209>`_) (`#1210 <https://github.com/ros2/rcl/issues/1210>`_)
+  (cherry picked from commit 168ea9bb18507999c7011faaf8f3e527d69419f0)
+  Co-authored-by: Tomoya Fujita <Tomoya.Fujita@sony.com>
+* Contributors: mergify[bot]
+
 9.2.4 (2024-09-19)
 ------------------
 * Properly initialize the char array used in type hash calculations. (`#1182 <https://github.com/ros2/rcl/issues/1182>`_) (`#1183 <https://github.com/ros2/rcl/issues/1183>`_)
