@@ -2,8 +2,8 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.1.0 (2025-04-04)
+-------------------
 * Set envars to run tests with rmw_zenoh_cpp with multicast discovery (`#1218 <https://github.com/ros2/rcl/issues/1218>`_)
 * No need to add public symbol visibility macros in implementation. (`#1213 <https://github.com/ros2/rcl/issues/1213>`_)
 * fix 'rcl_action_server_configure_action_introspection': inconsistent dll linkage. (`#1212 <https://github.com/ros2/rcl/issues/1212>`_)

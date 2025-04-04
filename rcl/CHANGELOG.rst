@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.1.0 (2025-04-04)
+-------------------
 * Set envars to run tests with rmw_zenoh_cpp with multicast discovery (`#1218 <https://github.com/ros2/rcl/issues/1218>`_)
 * Fix typo in message header include in doc (`#1219 <https://github.com/ros2/rcl/issues/1219>`_)
 * use rmw_event_type_is_supported (`#1214 <https://github.com/ros2/rcl/issues/1214>`_)

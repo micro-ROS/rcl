@@ -2,8 +2,8 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.1.0 (2025-04-04)
+-------------------
 * add rcl_print_transition_map. (`#1217 <https://github.com/ros2/rcl/issues/1217>`_)
 * Enable test isolation in rcl_lifecycle (`#1216 <https://github.com/ros2/rcl/issues/1216>`_)
 * Contributors: Scott K Logan, Tomoya Fujita
