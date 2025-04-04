@@ -2,6 +2,17 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Set envars to run tests with rmw_zenoh_cpp with multicast discovery (`#1218 <https://github.com/ros2/rcl/issues/1218>`_)
+* Fix typo in message header include in doc (`#1219 <https://github.com/ros2/rcl/issues/1219>`_)
+* use rmw_event_type_is_supported (`#1214 <https://github.com/ros2/rcl/issues/1214>`_)
+* No need to add public symbol visibility macros in implementation. (`#1213 <https://github.com/ros2/rcl/issues/1213>`_)
+* Add new interfaces to enable intropsection for action (`#1207 <https://github.com/ros2/rcl/issues/1207>`_)
+* Use FASTDDS_DEFAULT_PROFILES_FILE instead. (`#1211 <https://github.com/ros2/rcl/issues/1211>`_)
+* Relieve timer test period not to miss the cycle. (`#1209 <https://github.com/ros2/rcl/issues/1209>`_)
+* Contributors: Alejandro Hernández Cordero, Barry Xu, Christophe Bedard, Tomoya Fujita, yadunund
+
 10.0.2 (2025-01-31)
 -------------------
 * fix(rcl_action): Allow to pass the timer to action during initialization (`#1201 <https://github.com/ros2/rcl/issues/1201>`_)
