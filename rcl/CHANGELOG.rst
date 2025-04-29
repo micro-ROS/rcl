@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.2.6 (2025-04-29)
+------------------
 * remove rmw_connext from test. (`#1226 <https://github.com/ros2/rcl/issues/1226>`_) (`#1228 <https://github.com/ros2/rcl/issues/1228>`_)
   (cherry picked from commit 9c6da4d2f35097a43c2b287359c4657e3f652568)
   Co-authored-by: Tomoya Fujita <Tomoya.Fujita@sony.com>
