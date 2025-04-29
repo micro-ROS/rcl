@@ -2,6 +2,21 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove rmw_connext from test. (`#1226 <https://github.com/ros2/rcl/issues/1226>`_) (`#1228 <https://github.com/ros2/rcl/issues/1228>`_)
+  (cherry picked from commit 9c6da4d2f35097a43c2b287359c4657e3f652568)
+  Co-authored-by: Tomoya Fujita <Tomoya.Fujita@sony.com>
+* Fix a dangling pointer discovered by a fresh Clang (`#1222 <https://github.com/ros2/rcl/issues/1222>`_) (`#1223 <https://github.com/ros2/rcl/issues/1223>`_)
+  Fix a dangling pointer discovered by the -Wdangling Clang diagnostic:
+  ```
+  rcl/src/rcl/node_resolve_name.c:95:26: error: temporary whose address is used as value of local variable 'error' will be destroyed at the end of the full-expression [-Werror,-Wdangling]
+  95 |     const char * error = rmw_get_error_string().str;
+  ```
+  (cherry picked from commit 57dc28e3c396f2a3ce1e2a1b065f298b8fdd49cc)
+  Co-authored-by: Alexander Kornienko <alexfh@google.com>
+* Contributors: mergify[bot]
+
 9.2.5 (2025-04-02)
 ------------------
 * use rmw_event_type_is_supported (backport `#1214 <https://github.com/ros2/rcl/issues/1214>`_) (`#1215 <https://github.com/ros2/rcl/issues/1215>`_)
