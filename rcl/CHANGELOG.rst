@@ -2,6 +2,16 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.1 (2025-05-30)
+-------------------
+* remove unnecessary test_with_localhost_only. (`#1238 <https://github.com/ros2/rcl/issues/1238>`_)
+* Address memory leaks in rcl test_timer_init_state (`#1236 <https://github.com/ros2/rcl/issues/1236>`_)
+* Removed unused nondefault_qos_profile (`#1233 <https://github.com/ros2/rcl/issues/1233>`_)
+* Removed unused functions (`#1230 <https://github.com/ros2/rcl/issues/1230>`_)
+* remove rcl_qos_profile_rosout_default. (`#1225 <https://github.com/ros2/rcl/issues/1225>`_)
+* remove rmw_connext from test. (`#1226 <https://github.com/ros2/rcl/issues/1226>`_)
+* Contributors: Alejandro Hernández Cordero, Michael Orlov, Tomoya Fujita
+
 10.2.0 (2025-04-25)
 -------------------
 * Fix a dangling pointer discovered by a fresh Clang (`#1222 <https://github.com/ros2/rcl/issues/1222>`_)
