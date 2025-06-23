@@ -2,6 +2,12 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.2 (2025-06-23)
+-------------------
+* Assert HistoryQoS in test_info_by_topic (`#1242 <https://github.com/ros2/rcl//issues/1242>`_)
+* Add a test for the subscription option 'ignore_local_publications' (`#1239 <https://github.com/ros2/rcl//issues/1239>`_)
+* Contributors: Barry Xu, Mario Domínguez López
+
 10.2.1 (2025-05-30)
 -------------------
 * remove unnecessary test_with_localhost_only. (`#1238 <https://github.com/ros2/rcl/issues/1238>`_)
