@@ -2,6 +2,9 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.1 (2025-06-23)
+-------------------
+
 10.1.0 (2025-04-04)
 -------------------
 * add rcl_print_transition_map. (`#1217 <https://github.com/ros2/rcl/issues/1217>`_)

@@ -2,6 +2,16 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.1 (2025-06-23)
+-------------------
+* Assert HistoryQoS in test_info_by_topic (`#1242 <https://github.com/ros2/rcl//issues/1242>`_) (`#1247 <https://github.com/ros2/rcl//issues/1247>`_)
+* Add a test for the subscription option 'ignore_local_publications' (`#1239 <https://github.com/ros2/rcl//issues/1239>`_) (`#1245 <https://github.com/ros2/rcl//issues/1245>`_)
+* Removed unused nondefault_qos_profile (`#1233 <https://github.com/ros2/rcl//issues/1233>`_) (`#1234 <https://github.com/ros2/rcl//issues/1234>`_)
+* Removed unused functions (`#1230 <https://github.com/ros2/rcl//issues/1230>`_) (`#1231 <https://github.com/ros2/rcl//issues/1231>`_)
+* remove rmw_connext from test. (`#1226 <https://github.com/ros2/rcl//issues/1226>`_) (`#1227 <https://github.com/ros2/rcl//issues/1227>`_)
+* Fix a dangling pointer discovered by a fresh Clang (`#1222 <https://github.com/ros2/rcl//issues/1222>`_)
+* Contributors: Alexander Kornienko, mergify[bot]
+
 10.1.0 (2025-04-04)
 -------------------
 * Set envars to run tests with rmw_zenoh_cpp with multicast discovery (`#1218 <https://github.com/ros2/rcl/issues/1218>`_)
