@@ -2,6 +2,14 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.2.7 (2025-06-23)
+------------------
+* Add a test for the subscription option 'ignore_local_publications' (backport `#1239 <https://github.com/ros2/rcl//issues/1239>`_) (`#1244 <https://github.com/ros2/rcl//issues/1244>`_)
+* Change the starting time of the goal expiration timeout (`#1121 <https://github.com/ros2/rcl//issues/1121>`_) (`#1240 <https://github.com/ros2/rcl//issues/1240>`_)
+* Removed unused nondefault_qos_profile (`#1233 <https://github.com/ros2/rcl//issues/1233>`_) (`#1235 <https://github.com/ros2/rcl//issues/1235>`_)
+* Removed unused functions (`#1230 <https://github.com/ros2/rcl//issues/1230>`_) (`#1232 <https://github.com/ros2/rcl//issues/1232>`_)
+* Contributors: mergify[bot]
+
 9.2.6 (2025-04-29)
 ------------------
 * remove rmw_connext from test. (`#1226 <https://github.com/ros2/rcl/issues/1226>`_) (`#1228 <https://github.com/ros2/rcl/issues/1228>`_)
