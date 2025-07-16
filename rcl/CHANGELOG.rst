@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.3.10 (2025-07-16)
+-------------------
 * Fix a dangling pointer discovered by a fresh Clang (`#1222 <https://github.com/ros2/rcl/issues/1222>`_) (`#1224 <https://github.com/ros2/rcl/issues/1224>`_)
 * Contributors: mergify[bot]
 
