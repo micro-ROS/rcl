@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix Cmake deprecation (`#1249 <https://github.com/ros2/rcl/issues/1249>`_)
+* Contributors: mosfet80
+
 10.2.2 (2025-06-23)
 -------------------
 * Assert HistoryQoS in test_info_by_topic (`#1242 <https://github.com/ros2/rcl//issues/1242>`_)
