@@ -2,8 +2,8 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.1.2 (2025-09-30)
+-------------------
 * Fix Cmake deprecation (`#1249 <https://github.com/ros2/rcl/issues/1249>`_) (`#1250 <https://github.com/ros2/rcl/issues/1250>`_)
   cmake version < then 3.10 is deprecated
   (cherry picked from commit 06c9ba61513efed8d21fdc6e7719438c04a927ea)
