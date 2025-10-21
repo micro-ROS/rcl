@@ -2,6 +2,11 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.11 (2025-10-21)
+-------------------
+* Fix param file parsing failure with wildcards due to ordering (`#1253 <https://github.com/ros2/rcl/issues/1253>`_) (`#1264 <https://github.com/ros2/rcl/issues/1264>`_)
+* Contributors: mergify[bot]
+
 5.3.10 (2025-07-16)
 -------------------
 
