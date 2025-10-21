@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.3 (2025-10-21)
+-------------------
+* Fix typos: occurrs->occurs, successfull->successful (`#1259 <https://github.com/ros2/rcl/issues/1259>`_) (`#1261 <https://github.com/ros2/rcl/issues/1261>`_)
+* Contributors: mergify[bot]
+
 10.1.2 (2025-09-30)
 -------------------
 * Fix Cmake deprecation (`#1249 <https://github.com/ros2/rcl/issues/1249>`_) (`#1250 <https://github.com/ros2/rcl/issues/1250>`_)
