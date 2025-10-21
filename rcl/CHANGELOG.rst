@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.5 (2025-10-21)
+-------------------
+* rcl_logging_allocator_initialize() support. (`#1049 <https://github.com/ros2/rcl/issues/1049>`_)
+* Contributors: Sai Kishor Kothakota, Tomoya Fujita
+
 10.2.4 (2025-09-30)
 -------------------
 * Fix typos: occurrs->occurs, successfull->successful (`#1259 <https://github.com/ros2/rcl/issues/1259>`_)
