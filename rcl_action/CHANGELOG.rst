@@ -2,6 +2,11 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.2.8 (2025-10-21)
+------------------
+* Added remapping resolution for action names (`#1170 <https://github.com/ros2/rcl/issues/1170>`_) (`#1220 <https://github.com/ros2/rcl/issues/1220>`_)
+* Contributors: mergify[bot]
+
 9.2.7 (2025-06-23)
 ------------------
 * Change the starting time of the goal expiration timeout (`#1121 <https://github.com/ros2/rcl//issues/1121>`_) (`#1240 <https://github.com/ros2/rcl//issues/1240>`_)
