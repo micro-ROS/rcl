@@ -2,6 +2,12 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.6 (2025-11-17)
+-------------------
+* Add clients servers info (`#1161 <https://github.com/ros2/rcl/issues/1161>`_)
+* Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_)
+* Contributors: Minju, Lee, Tim Clephas
+
 10.2.5 (2025-10-21)
 -------------------
 * rcl_logging_allocator_initialize() support. (`#1049 <https://github.com/ros2/rcl/issues/1049>`_)

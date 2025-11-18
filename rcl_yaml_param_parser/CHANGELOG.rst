@@ -2,6 +2,11 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.6 (2025-11-17)
+-------------------
+* Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_)
+* Contributors: Tim Clephas
+
 10.2.5 (2025-10-21)
 -------------------
 * Fix param file parsing failure with wildcards due to ordering (`#1253 <https://github.com/ros2/rcl/issues/1253>`_)
