@@ -1,0 +1,4 @@
+bool_tag:
+  ros__parameters:
+    test: !!bool eurt
+
