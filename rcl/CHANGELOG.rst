@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.2.9 (2026-01-19)
+------------------
+* Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1273 <https://github.com/ros2/rcl/issues/1273>`_)
+* Contributors: mergify[bot]
+
 9.2.8 (2025-10-21)
 ------------------
 * Fix typos: occurrs->occurs, successfull->successful (`#1259 <https://github.com/ros2/rcl/issues/1259>`_) (`#1262 <https://github.com/ros2/rcl/issues/1262>`_)
