@@ -2,6 +2,11 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.12 (2026-01-19)
+-------------------
+* Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1274 <https://github.com/ros2/rcl/issues/1274>`_)
+* Contributors: mergify[bot]
+
 5.3.11 (2025-10-21)
 -------------------
 
