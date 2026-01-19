@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.7 (2026-01-19)
+-------------------
+* Remove default from switch with enum, so that compiler warns. (`#1278 <https://github.com/ros2/rcl/issues/1278>`_)
+* Contributors: Tomoya Fujita
+
 10.2.6 (2025-11-17)
 -------------------
 * Add clients servers info (`#1161 <https://github.com/ros2/rcl/issues/1161>`_)

@@ -2,6 +2,15 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.2.7 (2026-01-19)
+-------------------
+* Validate name input in add_name_to_ns function (`#1281 <https://github.com/ros2/rcl/issues/1281>`_)
+* parse_key() should use yaml_map_lvl_t instead of uint_32. (`#1279 <https://github.com/ros2/rcl/issues/1279>`_)
+* Remove default from switch with enum, so that compiler warns. (`#1278 <https://github.com/ros2/rcl/issues/1278>`_)
+* Add yaml tags support (`#1275 <https://github.com/ros2/rcl/issues/1275>`_)
+  Co-authored-by: Lei Liu <Lei.Liu.AP@sony.com>
+* Contributors: Barry Xu, Tomoya Fujita
+
 10.2.6 (2025-11-17)
 -------------------
 * Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_)
