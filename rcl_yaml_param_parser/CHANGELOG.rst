@@ -2,6 +2,12 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.4 (2026-01-19)
+-------------------
+* Validate name input in add_name_to_ns function (`#1281 <https://github.com/ros2/rcl/issues/1281>`_) (`#1283 <https://github.com/ros2/rcl/issues/1283>`_)
+* Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1272 <https://github.com/ros2/rcl/issues/1272>`_)
+* Contributors: mergify[bot]
+
 10.1.3 (2025-10-21)
 -------------------
 * Fix param file parsing failure with wildcards due to ordering (`#1253 <https://github.com/ros2/rcl/issues/1253>`_) (`#1266 <https://github.com/ros2/rcl/issues/1266>`_)
