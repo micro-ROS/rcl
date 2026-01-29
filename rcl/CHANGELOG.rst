@@ -2,8 +2,8 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.3.0 (2026-01-29)
+-------------------
 * rcl_logging_implementation package support. (`#1276 <https://github.com/ros2/rcl/issues/1276>`_)
 * Contributors: Tomoya Fujita
 
