@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* rcl_logging_implementation package support. (`#1276 <https://github.com/ros2/rcl/issues/1276>`_)
+* Contributors: Tomoya Fujita
+
 10.2.7 (2026-01-19)
 -------------------
 * Remove default from switch with enum, so that compiler warns. (`#1278 <https://github.com/ros2/rcl/issues/1278>`_)
