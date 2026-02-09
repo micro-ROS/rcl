@@ -2,6 +2,9 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.3.1 (2026-02-09)
+-------------------
+
 10.3.0 (2026-01-29)
 -------------------
 * rcl_logging_implementation package support. (`#1276 <https://github.com/ros2/rcl/issues/1276>`_)
