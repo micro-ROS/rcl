@@ -2,6 +2,9 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.3.2 (2026-03-07)
+-------------------
+
 10.3.1 (2026-02-09)
 -------------------
 * Populate Transitions in Transition Events (continuation) (`#1269 <https://github.com/ros2/rcl/issues/1269>`_)

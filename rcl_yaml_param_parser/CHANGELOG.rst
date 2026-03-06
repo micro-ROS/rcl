@@ -2,6 +2,12 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.3.2 (2026-03-07)
+-------------------
+* rcl_yaml_node_struct_print print loop interation fix. (`#1290 <https://github.com/ros2/rcl//issues/1290>`_)
+* rcl_yaml_param_parser: add support for binary tag to load byte arrays parameters (`#1256 <https://github.com/ros2/rcl//issues/1256>`_)
+* Contributors: Romain Reignier, Tomoya Fujita
+
 10.3.1 (2026-02-09)
 -------------------
 
