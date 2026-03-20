@@ -2,8 +2,8 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+10.4.0 (2026-03-20)
+-------------------
 * Use the POSIX locale to parse YAML double (`#1292 <https://github.com/ros2/rcl/issues/1292>`_)
 * Contributors: Hugal31
 
