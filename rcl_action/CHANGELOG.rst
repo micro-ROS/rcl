@@ -2,6 +2,12 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add API for client libraries to set action server goal expiration callbacks (`#1295 <https://github.com/ros2/rcl/issues/1295>`_)
+* support rcl_action_count_clients and rcl_action_count_servers. (`#1294 <https://github.com/ros2/rcl/issues/1294>`_)
+* Contributors: Skyler Medeiros, Tomoya Fujita
+
 10.3.2 (2026-03-07)
 -------------------
 

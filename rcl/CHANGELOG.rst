@@ -2,6 +2,13 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add API for client libraries to set action server goal expiration callbacks (`#1295 <https://github.com/ros2/rcl/issues/1295>`_)
+* Fujitatomoya/improve rcl test graph (`#1296 <https://github.com/ros2/rcl/issues/1296>`_)
+* Add content filtering support check for subscriptions (`#1293 <https://github.com/ros2/rcl/issues/1293>`_)
+* Contributors: Barry Xu, Skyler Medeiros, Tomoya Fujita
+
 10.3.2 (2026-03-07)
 -------------------
 
