@@ -2,6 +2,12 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.1 (2026-03-24)
+-------------------
+* Remove the check for content filter support at the RCL layer (`#1304 <https://github.com/ros2/rcl/issues/1304>`_)
+* Use new aggregate rosidl target instead of _TARGETS (`#1302 <https://github.com/ros2/rcl/issues/1302>`_)
+* Contributors: Barry Xu, Emerson Knapp
+
 10.4.0 (2026-03-20)
 -------------------
 * Add API for client libraries to set action server goal expiration callbacks (`#1295 <https://github.com/ros2/rcl/issues/1295>`_)

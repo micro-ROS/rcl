@@ -2,6 +2,12 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.1 (2026-03-24)
+-------------------
+* simplify error logging for timer cancellation (`#1307 <https://github.com/ros2/rcl/issues/1307>`_)
+* fix: Prevent short time endless loop in expire_timer (`#1303 <https://github.com/ros2/rcl/issues/1303>`_)
+* Contributors: Janosch Machowinski, William Woodall
+
 10.4.0 (2026-03-20)
 -------------------
 * Add API for client libraries to set action server goal expiration callbacks (`#1295 <https://github.com/ros2/rcl/issues/1295>`_)
