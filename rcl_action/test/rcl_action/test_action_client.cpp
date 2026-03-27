@@ -485,3 +485,131 @@ TEST_F(TestActionClientFixture, test_set_internal_services_introspection_content
 {
   check_set_services_introspection(RCL_SERVICE_INTROSPECTION_CONTENTS, 1);
 }
+
+TEST_F(TestActionClientFixture, test_configure_feedback_subscription_filter_goal_id_invalid_inputs)
+{
+  uint8_t goal_id[UUID_SIZE] = {0};
+
+  rcl_ret_t ret = rcl_action_client_configure_feedback_subscription_filter_add_goal_id(
+    nullptr, goal_id, UUID_SIZE);
+  EXPECT_EQ(RCL_RET_ACTION_CLIENT_INVALID, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  rcl_action_client_t invalid_client = rcl_action_get_zero_initialized_client();
+  ret = rcl_action_client_configure_feedback_subscription_filter_add_goal_id(
+    &invalid_client, goal_id, UUID_SIZE);
+  EXPECT_EQ(RCL_RET_ACTION_CLIENT_INVALID, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  ret = rcl_action_client_configure_feedback_subscription_filter_add_goal_id(
+    &this->action_client, nullptr, UUID_SIZE);
+  EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  ret = rcl_action_client_configure_feedback_subscription_filter_add_goal_id(
+    &this->action_client, goal_id, UUID_SIZE - 1);
+  EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  ret = rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
+    nullptr, goal_id, UUID_SIZE);
+  EXPECT_EQ(RCL_RET_ACTION_CLIENT_INVALID, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  ret = rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
+    &invalid_client, goal_id, UUID_SIZE);
+  EXPECT_EQ(RCL_RET_ACTION_CLIENT_INVALID, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  ret = rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
+    &this->action_client, nullptr, UUID_SIZE);
+  EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+
+  ret = rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
+    &this->action_client, goal_id, UUID_SIZE - 1);
+  EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, ret) << rcl_get_error_string().str;
+  rcl_reset_error();
+}
+
+TEST_F(TestActionClientFixture, test_configure_feedback_subscription_filter_goal_id_add)
+{
+  uint8_t goal_id[UUID_SIZE];
+  for (size_t i = 0; i < UUID_SIZE; ++i) {
+    goal_id[i] = static_cast<uint8_t>(i);
+  }
+
+  rcl_ret_t ret = rcl_action_client_configure_feedback_subscription_filter_add_goal_id(
+    &this->action_client, goal_id, UUID_SIZE);
+
+  // If rmw implementation supports content filter, the function should succeed. Otherwise,
+  // it should return RCL_RET_UNSUPPORTED.
+  if (rcl_subscription_is_cft_supported(&this->action_client.impl->feedback_subscription)) {
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+    rcl_reset_error();
+  } else {
+    EXPECT_EQ(RCL_RET_UNSUPPORTED, ret) << rcl_get_error_string().str;
+    rcl_reset_error();
+  }
+}
+
+TEST_F(TestActionClientFixture, test_configure_feedback_subscription_filter_goal_id_remove)
+{
+  uint8_t goal_id[UUID_SIZE];
+  for (size_t i = 0; i < UUID_SIZE; ++i) {
+    goal_id[i] = static_cast<uint8_t>(i);
+  }
+
+  rcl_ret_t ret = rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
+    &this->action_client, goal_id, UUID_SIZE);
+  // If rmw implementation supports content filter, the function should succeed. Otherwise,
+  // it should return RCL_RET_UNSUPPORTED.
+  if (rcl_subscription_is_cft_supported(&this->action_client.impl->feedback_subscription)) {
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+    rcl_reset_error();
+  } else {
+    EXPECT_EQ(RCL_RET_UNSUPPORTED, ret) << rcl_get_error_string().str;
+    rcl_reset_error();
+  }
+}
+
+TEST_F(
+  TestActionClientFixture, test_configure_feedback_subscription_filter_goal_id_reach_limitation)
+{
+  // Skip the test if content filter isn't supported.
+  if (!rcl_subscription_is_cft_supported(&this->action_client.impl->feedback_subscription)) {
+    GTEST_SKIP() << "RMW implementation does not support content filter.";
+  }
+
+  // Skip the test if the RMW implementation is ConnextDDS.
+  // ConnextDDS has restrictions on the length of content filter expressions. Please refer to
+  // the definition of RMW_CONNEXT_CONTENTFILTER_PROPERTY_MAX_LENGTH. The current default value
+  // is 1024, which cannot support setting 6 goal IDs. So the test will be skipped for ConnextDDS
+  // to avoid failure. If the default value is increased in the future, this test can be enabled
+  // for ConnextDDS as well.
+  if (strcmp(rmw_get_implementation_identifier(), "rmw_connextdds") == 0) {
+    GTEST_SKIP() << "RMW implementation is ConnextDDS.";
+  }
+
+  // A maximum of 6 goal IDs are supported. Configuring a 7th goal ID will exceed the content
+  // filter's maximum limit of 100 parameters. An error should be returned.
+  constexpr uint8_t MAX_SUPPORTED_GOAL_IDS = 6;
+  constexpr uint8_t num_goal_ids_exceeding_limit = MAX_SUPPORTED_GOAL_IDS + 1;
+  uint8_t goal_id_base[UUID_SIZE] = {0};
+  for (size_t i = 0; i < num_goal_ids_exceeding_limit; ++i) {
+    goal_id_base[UUID_SIZE - 1] = static_cast<uint8_t>(i);
+    rcl_ret_t ret = rcl_action_client_configure_feedback_subscription_filter_add_goal_id(
+      &this->action_client, goal_id_base, UUID_SIZE);
+    if (i < MAX_SUPPORTED_GOAL_IDS) {
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+      rcl_reset_error();
+      EXPECT_EQ(action_client.impl->disable_feedback_sub_cft, false);
+    } else {
+      EXPECT_EQ(RCL_RET_ERROR, ret) << rcl_get_error_string().str;
+      rcl_reset_error();
+      // The content filter should be disabled since the maximum number of content filter
+      // parameters has been reached.
+      EXPECT_EQ(action_client.impl->disable_feedback_sub_cft, true);
+    }
+  }
+}
