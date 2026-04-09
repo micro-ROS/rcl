@@ -2,6 +2,11 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.2 (2026-04-09)
+-------------------
+* fix (`#1310 <https://github.com/ros2/rcl/issues/1310>`_)
+* Contributors: Michael Carlstrom
+
 10.4.1 (2026-03-24)
 -------------------
 

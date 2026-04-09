@@ -2,6 +2,14 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.2 (2026-04-09)
+-------------------
+* Improved documentation of rcl_XYZ_set_on_new_XYZ_callback (`#1289 <https://github.com/ros2/rcl/issues/1289>`_)
+* Add rcl_subscription_options_set_acceptable_buffer_backends with proper lifetime management (`#1308 <https://github.com/ros2/rcl/issues/1308>`_)
+* Added tracepoint to rcl_take_loaned_message (`#1300 <https://github.com/ros2/rcl/issues/1300>`_)
+* Apply change from "Use new aggregate rosidl target instead of _TARGETS (`#1302 <https://github.com/ros2/rcl/issues/1302>`_)" on some leftovers (`#1309 <https://github.com/ros2/rcl/issues/1309>`_)
+* Contributors: Alexis Tsogias, CY Chen, Oren Bell PhD, Rushhaank Sahay
+
 10.4.1 (2026-03-24)
 -------------------
 * Remove the check for content filter support at the RCL layer (`#1304 <https://github.com/ros2/rcl/issues/1304>`_)
