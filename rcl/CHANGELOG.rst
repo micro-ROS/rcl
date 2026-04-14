@@ -2,6 +2,15 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.3 (2026-04-14)
+-------------------
+
+* Preserve ``rmw_create_node`` error state in ``rcl_node_init`` by using ``RCL_EXPECT_ERROR_IS_SET`` (`#1313 <https://github.com/ros2/rcl/issues/1313>`_)
+* Remove clang warnings (`#1315 <https://github.com/ros2/rcl/issues/1315>`_)
+* Add RCL_EXPECT_ERROR_IS_SET macro (`#1312 <https://github.com/ros2/rcl/issues/1312>`_)
+
+* Contributors: Akihiko Komada, Alejandro Hernández Cordero, Shane Loretz
+
 10.4.2 (2026-04-09)
 -------------------
 * Improved documentation of rcl_XYZ_set_on_new_XYZ_callback (`#1289 <https://github.com/ros2/rcl/issues/1289>`_)
