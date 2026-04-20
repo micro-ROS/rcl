@@ -2,6 +2,12 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.13 (2026-04-20)
+-------------------
+* Added rcl_timer_get_next_call_time (`#1146 <https://github.com/ros2/rcl/issues/1146>`_) (`#1237 <https://github.com/ros2/rcl/issues/1237>`_)
+* Fujitatomoya/improve rcl test graph (backport `#1296 <https://github.com/ros2/rcl/issues/1296>`_) (`#1299 <https://github.com/ros2/rcl/issues/1299>`_)
+* Contributors: mergify[bot], n8hui
+
 5.3.12 (2026-01-19)
 -------------------
 * Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1274 <https://github.com/ros2/rcl/issues/1274>`_)
