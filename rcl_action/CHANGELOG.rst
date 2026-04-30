@@ -2,6 +2,9 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 10.4.2 (2026-04-09)
 -------------------
 * fix(rcl_action): use RMW isolation for cross-node tests (`#1311 <https://github.com/ros2/rcl/issues/1311>`_)
