@@ -195,10 +195,10 @@ ament_export_dependencies(rmw_implementation)
 ament_export_dependencies(rosidl_runtime_c)
 ament_export_dependencies(type_description_interfaces)
 ament_generate_version_header(${PROJECT_NAME})
+ament_export_dependencies(tracetools)
 
 if(NOT RCL_MICROROS)
   ament_export_dependencies(rcl_yaml_param_parser)
-  ament_export_dependencies(tracetools)
 endif()
 
 if(NOT RCL_MICROROS)
