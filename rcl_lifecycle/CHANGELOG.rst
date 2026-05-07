@@ -2,6 +2,11 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* cleanup headers (`#1318 <https://github.com/ros2/rcl/issues/1318>`_)
+* Contributors: Alejandro Hernández Cordero
+
 10.4.2 (2026-04-09)
 -------------------
 * Apply change from "Use new aggregate rosidl target instead of _TARGETS (`#1302 <https://github.com/ros2/rcl/issues/1302>`_)" on some leftovers (`#1309 <https://github.com/ros2/rcl/issues/1309>`_)
