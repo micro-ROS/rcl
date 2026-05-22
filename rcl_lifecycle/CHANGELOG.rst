@@ -2,6 +2,9 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.5.1 (2026-05-22)
+-------------------
+
 10.5.0 (2026-05-07)
 -------------------
 * cleanup headers (`#1318 <https://github.com/ros2/rcl/issues/1318>`_)

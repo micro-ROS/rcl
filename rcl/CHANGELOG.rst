@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.5.1 (2026-05-22)
+-------------------
+* add rcl_publisher/subscription_event_type_is_supported(). (`#1317 <https://github.com/ros2/rcl/issues/1317>`_)
+* Contributors: Tomoya Fujita
+
 10.5.0 (2026-05-07)
 -------------------
 * cleanup headers (`#1318 <https://github.com/ros2/rcl/issues/1318>`_)
