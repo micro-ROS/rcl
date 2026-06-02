@@ -2,6 +2,9 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 9.2.9 (2026-01-19)
 ------------------
 * Validate name input in add_name_to_ns function (`#1281 <https://github.com/ros2/rcl/issues/1281>`_) (`#1284 <https://github.com/ros2/rcl/issues/1284>`_)

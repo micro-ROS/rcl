@@ -2,6 +2,13 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fujitatomoya/improve rcl test graph (`#1296 <https://github.com/ros2/rcl/issues/1296>`_) (`#1298 <https://github.com/ros2/rcl/issues/1298>`_)
+  (cherry picked from commit c5fe2bf0a57502462d5717b0fd2e4072e6b55c63)
+  Co-authored-by: Tomoya Fujita <Tomoya.Fujita@sony.com>
+* Contributors: mergify[bot]
+
 9.2.9 (2026-01-19)
 ------------------
 * Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1273 <https://github.com/ros2/rcl/issues/1273>`_)
