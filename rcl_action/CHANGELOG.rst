@@ -2,6 +2,26 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix: Prevent short time endless loop in expire_timer (`#1303 <https://github.com/ros2/rcl/issues/1303>`_) (`#1305 <https://github.com/ros2/rcl/issues/1305>`_)
+  * fix: Prevent short time endless loop in expire_timer
+  There were multiple bugs in this area:
+  - The expire of goals and the re computation of the expire period
+  had a < vs <= issue, leading to goals not expiring, while the
+  period for the next expire was compute as 0 leading to a direct
+  recall of the expire timer. In combination with sim time this lead
+  to 100% CPU spikes.
+  - The period of the expire timer was changed after the reset of the timer,
+  leading to an incorrect next call time of the timer.
+  - The timer was not canceled after the expire event was issued
+  * chore: Removed unneeded line
+  ---------
+  (cherry picked from commit 927a33e55963aa00a23286658af7747fac1aaf87)
+  resolve merge conflicts
+  Co-authored-by: Janosch Machowinski <jmachowinski@users.noreply.github.com>
+* Contributors: mergify[bot]
+
 9.2.10 (2026-06-02)
 -------------------
 

@@ -2,6 +2,9 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 9.2.10 (2026-06-02)
 -------------------
 * Fujitatomoya/improve rcl test graph (`#1296 <https://github.com/ros2/rcl/issues/1296>`_) (`#1298 <https://github.com/ros2/rcl/issues/1298>`_)
