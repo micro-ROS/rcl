@@ -2,8 +2,8 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+9.2.11 (2026-06-08)
+-------------------
 * fix: Prevent short time endless loop in expire_timer (`#1303 <https://github.com/ros2/rcl/issues/1303>`_) (`#1305 <https://github.com/ros2/rcl/issues/1305>`_)
   * fix: Prevent short time endless loop in expire_timer
   There were multiple bugs in this area:
