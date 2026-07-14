@@ -2,6 +2,11 @@
 Changelog for package rcl_action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.5 (2026-07-14)
+-------------------
+* fix(rcl_action): use RMW isolation for cross-node tests (`#1311 <https://github.com/ros2/rcl/issues/1311>`_) (`#1316 <https://github.com/ros2/rcl/issues/1316>`_)
+* Contributors: mergify[bot]
+
 10.1.4 (2026-01-19)
 -------------------
 * Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1272 <https://github.com/ros2/rcl/issues/1272>`_)

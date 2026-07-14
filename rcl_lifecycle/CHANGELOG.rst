@@ -2,6 +2,9 @@
 Changelog for package rcl_lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.5 (2026-07-14)
+-------------------
+
 10.1.4 (2026-01-19)
 -------------------
 * Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1272 <https://github.com/ros2/rcl/issues/1272>`_)

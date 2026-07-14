@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.1.5 (2026-07-14)
+-------------------
+* Fujitatomoya/improve rcl test graph (`#1296 <https://github.com/ros2/rcl/issues/1296>`_) (`#1297 <https://github.com/ros2/rcl/issues/1297>`_)
+* Contributors: mergify[bot]
+
 10.1.4 (2026-01-19)
 -------------------
 * Fix REP url locations (`#1271 <https://github.com/ros2/rcl/issues/1271>`_) (`#1272 <https://github.com/ros2/rcl/issues/1272>`_)
