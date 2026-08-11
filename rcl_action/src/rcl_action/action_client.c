@@ -796,6 +796,7 @@ rcl_action_client_configure_action_introspection(
   return RCL_RET_OK;
 }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 /// \internal
 /// Converts a goal ID array (uint8_t) to an array of strings.
 static
@@ -1305,6 +1306,7 @@ err:
 
   return ret;
 }
+#endif // RCL_MICROROS_COMPLETE_IMPL
 #ifdef __cplusplus
 }
 #endif
