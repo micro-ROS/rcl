@@ -35,7 +35,7 @@ rcl_get_zero_initialized_context(void)
   // this is not constexpr so it cannot be in the struct initialization
 #ifdef RCL_MICROROS_COMPLETE_IMPL
   context.global_arguments = rcl_get_zero_initialized_arguments();
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   return context;
 }
 
@@ -121,7 +121,7 @@ __cleanup_context(rcl_context_t * context)
       rcl_reset_error();
     }
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   // if impl is null, nothing else can be cleaned up
   if (NULL != context->impl) {

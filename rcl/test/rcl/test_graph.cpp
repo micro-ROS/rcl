@@ -71,10 +71,12 @@ public:
     *this->old_context_ptr = rcl_get_zero_initialized_context();
     ret = rcl_init(0, nullptr, &init_options, this->old_context_ptr);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_EQ(
       RCL_RET_OK,
       rcl_logging_configure(&this->old_context_ptr->global_arguments, &allocator)
     ) << rcl_get_error_string().str;
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     this->old_node_ptr = new rcl_node_t;
     *this->old_node_ptr = rcl_get_zero_initialized_node();
     const char * old_name = "old_node_name";
@@ -94,10 +96,12 @@ public:
     const char * name = "test_graph_node";
     ret = rcl_node_init(this->node_ptr, name, "", this->context_ptr, &node_options);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (rcl_logging_rosout_enabled() && node_options.enable_rosout) {
       ret = rcl_logging_rosout_init_publisher_for_node(this->node_ptr);
       ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
     this->wait_set_ptr = new rcl_wait_set_t;
     *this->wait_set_ptr = rcl_get_zero_initialized_wait_set();
@@ -117,11 +121,13 @@ public:
     delete this->wait_set_ptr;
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     const rcl_node_options_t * node_ops = rcl_node_get_options(this->node_ptr);
     if (rcl_logging_rosout_enabled() && node_ops->enable_rosout) {
       ret = rcl_logging_rosout_fini_publisher_for_node(this->node_ptr);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     ret = rcl_node_fini(this->node_ptr);
     delete this->node_ptr;
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
@@ -134,7 +140,9 @@ public:
     ret = rcl_context_fini(this->old_context_ptr);
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     delete this->old_context_ptr;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_EQ(RCL_RET_OK, rcl_logging_fini()) << rcl_get_error_string().str;
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   }
 };
 
@@ -1063,6 +1071,14 @@ struct expected_node_state
 /**
  * Extend the TestGraphFixture with a multi node fixture for node discovery and node-graph perspective.
  */
+// Every node gets an implicit rosout publisher by default; that publisher does not exist
+// under micro-ROS, since enable_rosout defaults to false there.
+#ifdef RCL_MICROROS_COMPLETE_IMPL
+constexpr size_t kBaselinePublishers = 1;
+#else
+constexpr size_t kBaselinePublishers = 0;
+#endif  // RCL_MICROROS_COMPLETE_IMPL
+
 class NodeGraphMultiNodeFixture : public TestGraphFixture
 {
 public:
@@ -1100,10 +1116,12 @@ public:
       remote_node_ptr, remote_node_name, "", this->remote_context_ptr,
       &node_options);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (rcl_logging_rosout_enabled() && node_options.enable_rosout) {
       ret = rcl_logging_rosout_init_publisher_for_node(remote_node_ptr);
       ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
     sub_func = std::bind(
       rcl_get_subscriber_names_and_types_by_node,
@@ -1142,11 +1160,13 @@ public:
   {
     rcl_ret_t ret;
     TestGraphFixture::TearDown();
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     const rcl_node_options_t * node_ops = rcl_node_get_options(this->remote_node_ptr);
     if (rcl_logging_rosout_enabled() && node_ops->enable_rosout) {
       ret = rcl_logging_rosout_fini_publisher_for_node(this->remote_node_ptr);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     ret = rcl_node_fini(this->remote_node_ptr);
 
     delete this->remote_node_ptr;
@@ -1296,19 +1316,25 @@ TEST_F(NodeGraphMultiNodeFixture, test_node_info_subscriptions)
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   rcl_reset_error();
 
-  verify_subsystem_count(expected_node_state{1, 1, 0, 0}, expected_node_state{1, 1, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 1, 0, 0},
+    expected_node_state{kBaselinePublishers, 1, 0, 0});
 
   // Destroy the node's subscriber
   ret = rcl_subscription_fini(&sub, this->node_ptr);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   rcl_reset_error();
-  verify_subsystem_count(expected_node_state{1, 0, 0, 0}, expected_node_state{1, 1, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 0, 0},
+    expected_node_state{kBaselinePublishers, 1, 0, 0});
 
   // Destroy the remote node's subdscriber
   ret = rcl_subscription_fini(&sub2, this->remote_node_ptr);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   rcl_reset_error();
-  verify_subsystem_count(expected_node_state{1, 0, 0, 0}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 0, 0},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 }
 
 TEST_F(NodeGraphMultiNodeFixture, test_node_info_publishers)
@@ -1321,14 +1347,18 @@ TEST_F(NodeGraphMultiNodeFixture, test_node_info_publishers)
   ret = rcl_publisher_init(&pub, this->node_ptr, ts, this->topic_name.c_str(), &pub_ops);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   rcl_reset_error();
-  verify_subsystem_count(expected_node_state{2, 0, 0, 0}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers + 1, 0, 0, 0},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Destroyed publisher");
   // Destroy the publisher.
   ret = rcl_publisher_fini(&pub, this->node_ptr);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   rcl_reset_error();
-  verify_subsystem_count(expected_node_state{1, 0, 0, 0}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 0, 0},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 }
 
 TEST_F(NodeGraphMultiNodeFixture, test_node_info_services)
@@ -1340,12 +1370,16 @@ TEST_F(NodeGraphMultiNodeFixture, test_node_info_services)
   auto ts1 = ROSIDL_GET_SRV_TYPE_SUPPORT(test_msgs, srv, BasicTypes);
   ret = rcl_service_init(&service, this->node_ptr, ts1, service_name, &service_options);
   ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-  verify_subsystem_count(expected_node_state{1, 0, 1, 0}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 1, 0},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 
   // Destroy service.
   ret = rcl_service_fini(&service, this->node_ptr);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-  verify_subsystem_count(expected_node_state{1, 0, 0, 0}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 0, 0},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 }
 
 TEST_F(NodeGraphMultiNodeFixture, test_node_info_clients)
@@ -1357,12 +1391,16 @@ TEST_F(NodeGraphMultiNodeFixture, test_node_info_clients)
   auto ts = ROSIDL_GET_SRV_TYPE_SUPPORT(test_msgs, srv, BasicTypes);
   ret = rcl_client_init(&client, this->node_ptr, ts, service_name, &client_options);
   ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-  verify_subsystem_count(expected_node_state{1, 0, 0, 1}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 0, 1},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 
   // Destroy client
   ret = rcl_client_fini(&client, this->node_ptr);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-  verify_subsystem_count(expected_node_state{1, 0, 0, 0}, expected_node_state{1, 0, 0, 0});
+  verify_subsystem_count(
+    expected_node_state{kBaselinePublishers, 0, 0, 0},
+    expected_node_state{kBaselinePublishers, 0, 0, 0});
 }
 
 /*
