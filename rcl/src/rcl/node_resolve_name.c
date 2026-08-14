@@ -85,7 +85,7 @@ rcl_resolve_name(
       goto cleanup;
     }
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   if (NULL == remapped_topic_name) {
     remapped_topic_name = expanded_topic_name;
     expanded_topic_name = NULL;
@@ -151,14 +151,14 @@ rcl_node_resolve_name(
   if (node_options->use_global_arguments) {
     global_args = &(node->context->global_arguments);
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   return rcl_resolve_name(
 #ifdef RCL_MICROROS_COMPLETE_IMPL
     &(node_options->arguments),
 #else
     NULL,
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     global_args,
     input_topic_name,
     rcl_node_get_name(node),
