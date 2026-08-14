@@ -29,7 +29,7 @@ struct rcl_service_impl_s
   char * remapped_service_name;
 #ifdef RCL_MICROROS_COMPLETE_IMPL
   rosidl_type_hash_t type_hash;
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   bool in_use_by_waitset;
 };
 

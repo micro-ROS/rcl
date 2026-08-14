@@ -486,6 +486,7 @@ TEST_F(TestActionClientFixture, test_set_internal_services_introspection_content
   check_set_services_introspection(RCL_SERVICE_INTROSPECTION_CONTENTS, 1);
 }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionClientFixture, test_configure_feedback_subscription_filter_goal_id_invalid_inputs)
 {
   uint8_t goal_id[UUID_SIZE] = {0};
@@ -613,3 +614,4 @@ TEST_F(
     }
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL

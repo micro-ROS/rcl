@@ -26,7 +26,7 @@ extern "C"
 #include "rcl/node.h"
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/publisher.h"
 #include "rcl/time.h"
 #include "rcutils/logging_macros.h"
@@ -189,7 +189,7 @@ rcl_client_init(
     goto destroy_client;
   }
   client->impl->type_hash = *hash;
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Client initialized");
   TRACETOOLS_TRACEPOINT(
@@ -259,7 +259,7 @@ rcl_client_fini(rcl_client_t * client, rcl_node_t * node)
       RCUTILS_SAFE_FWRITE_TO_STDERR(rcl_get_error_string().str);
       result = RCL_RET_ERROR;
     }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     allocator.deallocate(client->impl->remapped_service_name, allocator.state);
     client->impl->remapped_service_name = NULL;
 

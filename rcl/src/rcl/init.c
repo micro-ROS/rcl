@@ -29,19 +29,19 @@ extern "C"
 
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/arguments.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/discovery_options.h"
 #include "rcl/domain_id.h"
 #include "rcl/error_handling.h"
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/logging.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/security.h"
 #include "rcl/validate_enclave_name.h"
 
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "./arguments_impl.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "./common.h"
 #include "./context_impl.h"
 #include "./init_options_impl.h"
@@ -88,7 +88,7 @@ rcl_init(
 #ifdef RCL_MICROROS_COMPLETE_IMPL
   // Zero initialize global arguments.
   context->global_arguments = rcl_get_zero_initialized_arguments();
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   // Setup impl for context.
   // use zero_allocate so the cleanup function will not try to clean up uninitialized parts later
@@ -138,7 +138,7 @@ rcl_init(
     RCUTILS_LOG_ERROR_NAMED(ROS_PACKAGE_NAME, "Failed to parse global arguments");
     goto fail;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   // Set the instance id.
   static uint32_t next_instance_id = 0;
@@ -229,6 +229,10 @@ rcl_init(
     context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
       "/", context->impl->allocator);
   }
+#else
+  context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
+    "/", context->impl->allocator);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   if (!context->impl->init_options.impl->rmw_init_options.enclave) {
     RCL_SET_ERROR_MSG("failed to set context name");
@@ -266,7 +270,6 @@ rcl_init(
     fail_ret = ret;
     goto fail;
   }
-#endif //RCL_MICROROS
 
   // Initialize rmw_init.
   rmw_ret_t rmw_ret = rmw_init(

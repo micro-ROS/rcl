@@ -1,0 +1,108 @@
+name: ubuntu CI micro-ROS rcl
+
+# The container image is derived from the branch under test, which works
+# because the branch names are the distro names:
+#  - kilted  -> ros:kilted-ros-base   (Ubuntu 24.04 noble)
+#  - lyrical -> ros:lyrical-ros-base  (Ubuntu 26.04 resolute)
+#  - rolling -> ros:rolling-ros-base  (Ubuntu 26.04 resolute)
+#
+# Besides push and pull_request, this is callable via workflow_call so a scheduled
+# workflow on the default branch can run it once per distro branch. Note that
+# `uses: ./.github/workflows/ci.yml` always resolves to the *caller's* copy of this
+# file, so the default branch's copy is what runs for every branch it tests; only
+# the checked-out source and the container image follow `inputs.branch`.
+
+on:
+  push:
+    branches:
+      - kilted
+      - lyrical
+      - rolling
+  pull_request:
+    branches:
+      - kilted
+      - lyrical
+      - rolling
+  workflow_call:
+    inputs:
+      branch:
+        description: >
+          Distro branch to check out and test. Leave unset for push and
+          pull_request, where the triggering ref is used instead.
+        type: string
+        required: false
+        default: ''
+  # To enable manual trigger
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.branch }}
+  cancel-in-progress: true
+
+env:
+  # Single source of truth for what gets built and tested.
+  TESTED_PACKAGES: rcl rcl_action rcl_lifecycle
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  rcl_microros_ci:
+    runs-on: ubuntu-latest
+    # inputs.branch is used when this workflow is called
+    # github.base_ref covers pull requests
+    # github.ref_name is the branch on a push
+    container: ros:${{ inputs.branch || github.base_ref || github.ref_name }}-ros-base
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Empty on push and pull_request, which leaves checkout's own behaviour
+          # intact — importantly the PR merge ref, so PRs keep testing the merge
+          # result rather than the base branch.
+          ref: ${{ inputs.branch }}
+          path: src/rcl
+
+      - name: Download dependencies
+        run: |
+          : "${ROS_DISTRO:?not set — is the container a ros:<distro>-ros-base image?}"
+          . /opt/ros/$ROS_DISTRO/setup.bash
+
+          # The image ships no apt lists (every layer of its Dockerfile ends in
+          # `rm -rf /var/lib/apt/lists/*`) and rosdep does not refresh them itself,
+          # so this is required before rosdep can install anything.
+          apt-get update
+
+          # Every rcl test dependency (mimick_vendor, osrf_testing_tools_cpp,
+          # test_msgs, launch_testing_ament_cmake, ...) is a released binary.
+          # rosdep is already initialised in the image; only its cache is stale.
+          rosdep update --rosdistro $ROS_DISTRO
+          rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -r -y
+
+      - name: Build
+        # GitHub replaces the image's entrypoint for container jobs, so
+        # /ros_entrypoint.sh never runs and each step must source ROS itself.
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          colcon --log-base /dev/null build \
+            --event-handlers console_direct+ \
+            --packages-up-to $TESTED_PACKAGES \
+            --cmake-args -DCMAKE_BUILD_TYPE=Release -DRCL_MICROROS=ON
+
+      - name: Test
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          colcon --log-base /dev/null test \
+            --event-handlers console_direct+ \
+            --return-code-on-test-failure \
+            --packages-select $TESTED_PACKAGES
+
+      - name: Test results
+        # The per-package tallies colcon prints are not a cross-package summary;
+        # this step is. It runs even when the test step failed.
+        if: ${{ !cancelled() }}
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          colcon test-result --verbose

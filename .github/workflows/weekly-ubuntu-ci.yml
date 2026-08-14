@@ -1,0 +1,24 @@
+name: Weekly ubuntu CI micro-ROS rcl
+
+on:
+  schedule:
+    # Mondays at 02:00 UTC
+    - cron: '0 2 * * 1'
+  # To enable manual trigger
+  workflow_dispatch:
+
+jobs:
+  ubuntu_ci:
+    name: ${{ matrix.branch }}
+    strategy:
+      # Without this, one distro failing would cancel the others and
+      # hide if they are fine
+      fail-fast: false
+      matrix:
+        branch:
+          - kilted
+          - lyrical
+          - rolling
+    uses: ./.github/workflows/ubuntu-ci.yml
+    with:
+      branch: ${{ matrix.branch }}
