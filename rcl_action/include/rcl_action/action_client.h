@@ -857,7 +857,7 @@ rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
   const rcl_action_client_t * action_client,
   const uint8_t * goal_id_array,
   size_t array_size);
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 RCL_ACTION_PUBLIC
 RCL_WARN_UNUSED

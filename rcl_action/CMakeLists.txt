@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(rcl_action)
 
+option(RCL_MICROROS "micro-ROS build mode" ON)
+
 find_package(ament_cmake_ros REQUIRED)
 find_package(ament_cmake_gen_version_h REQUIRED)
 
@@ -226,20 +228,22 @@ if(BUILD_TESTING)
       src
     )
   endif()
-  ament_add_gtest(test_action_name_remapping
-    test/rcl_action/test_action_name_remapping.cpp
-  )
-  if(TARGET test_action_name_remapping)
-    target_link_libraries(test_action_name_remapping
-      ament_cmake_ros_core::ament_ros_cxx_standard
-      ${PROJECT_NAME}
-      osrf_testing_tools_cpp::memory_tools
-      rcl::rcl
-      test_msgs::test_msgs
+  if(NOT RCL_MICROROS)
+    ament_add_gtest(test_action_name_remapping
+      test/rcl_action/test_action_name_remapping.cpp
     )
-    target_include_directories(test_action_name_remapping PRIVATE
-      src
-    )
+    if(TARGET test_action_name_remapping)
+      target_link_libraries(test_action_name_remapping
+        ament_cmake_ros_core::ament_ros_cxx_standard
+        ${PROJECT_NAME}
+        osrf_testing_tools_cpp::memory_tools
+        rcl::rcl
+        test_msgs::test_msgs
+      )
+      target_include_directories(test_action_name_remapping PRIVATE
+        src
+      )
+    endif()
   endif()
 endif()
 

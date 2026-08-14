@@ -234,19 +234,23 @@ TEST_F(TestNodeFixture, test_rcl_node_accessors) {
   EXPECT_EQ(nullptr, actual_node_logger_name);
   rcl_reset_error();
   actual_node_logger_name = rcl_node_get_logger_name(&invalid_node);
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   EXPECT_NE(actual_node_logger_name, nullptr);
   if (actual_node_logger_name) {
     EXPECT_EQ("ns." + std::string(name), std::string(actual_node_logger_name));
   }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   rcl_reset_error();
   EXPECT_NO_MEMORY_OPERATIONS(
   {
     actual_node_logger_name = rcl_node_get_logger_name(&node);
   });
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   EXPECT_NE(actual_node_logger_name, nullptr);
   if (actual_node_logger_name) {
     EXPECT_EQ("ns." + std::string(name), std::string(actual_node_logger_name));
   }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   // Test rcl_node_get_options().
   const rcl_node_options_t * actual_options;
   actual_options = rcl_node_get_options(nullptr);
@@ -455,6 +459,7 @@ TEST_F(TestNodeFixture, test_rcl_node_init_with_internal_errors) {
     EXPECT_EQ(RCL_RET_OK, rcl_shutdown(&context)) << rcl_get_error_string().str;
     EXPECT_EQ(RCL_RET_OK, rcl_context_fini(&context)) << rcl_get_error_string().str;
   });
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   // Initialize logging and rosout.
   ret = rcl_logging_configure(&context.global_arguments, &allocator);
   ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
@@ -468,6 +473,7 @@ TEST_F(TestNodeFixture, test_rcl_node_init_with_internal_errors) {
   {
     EXPECT_EQ(RCL_RET_OK, rcl_logging_rosout_fini()) << rcl_get_error_string().str;
   });
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   // Try with invalid allocator.
   rcl_node_options_t options_with_invalid_allocator = rcl_node_get_default_options();
   options_with_invalid_allocator.allocator.allocate = nullptr;
@@ -781,7 +787,11 @@ TEST_F(TestNodeFixture, test_rcl_node_names) {
     actual_node_namespace = rcl_node_get_namespace(&node);
     actual_node_fq_name = rcl_node_get_fully_qualified_name(&node);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("ns.node", actual_node_logger_name);
+#else
+    EXPECT_EQ(nullptr, actual_node_logger_name);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_name);
     EXPECT_STREQ("/ns", actual_node_namespace);
     EXPECT_STREQ("/ns/node", actual_node_fq_name);
@@ -801,7 +811,9 @@ TEST_F(TestNodeFixture, test_rcl_node_names) {
     actual_node_namespace = rcl_node_get_namespace(&node);
     actual_node_fq_name = rcl_node_get_fully_qualified_name(&node);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_logger_name);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_name);
     EXPECT_STREQ("/", actual_node_namespace);
     EXPECT_STREQ("/node", actual_node_fq_name);
@@ -821,7 +833,9 @@ TEST_F(TestNodeFixture, test_rcl_node_names) {
     actual_node_namespace = rcl_node_get_namespace(&node);
     actual_node_fq_name = rcl_node_get_fully_qualified_name(&node);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_logger_name);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_name);
     EXPECT_STREQ("/", actual_node_namespace);
     EXPECT_STREQ("/node", actual_node_fq_name);
@@ -841,7 +855,9 @@ TEST_F(TestNodeFixture, test_rcl_node_names) {
     actual_node_namespace = rcl_node_get_namespace(&node);
     actual_node_fq_name = rcl_node_get_fully_qualified_name(&node);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("ns.node", actual_node_logger_name);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_name);
     EXPECT_STREQ("/ns", actual_node_namespace);
     EXPECT_STREQ("/ns/node", actual_node_fq_name);
@@ -861,7 +877,9 @@ TEST_F(TestNodeFixture, test_rcl_node_names) {
     actual_node_namespace = rcl_node_get_namespace(&node);
     actual_node_fq_name = rcl_node_get_fully_qualified_name(&node);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("ns.sub_1.sub_2.node", actual_node_logger_name);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     EXPECT_STREQ("node", actual_node_name);
     EXPECT_STREQ("/ns/sub_1/sub_2", actual_node_namespace);
     EXPECT_STREQ("/ns/sub_1/sub_2/node", actual_node_fq_name);
@@ -879,8 +897,10 @@ TEST_F(TestNodeFixture, test_rcl_node_options) {
   memset(&not_ini_options.rosout_qos, 0, sizeof(rmw_qos_profile_t));
 
   EXPECT_TRUE(default_options.use_global_arguments);
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   EXPECT_TRUE(default_options.enable_rosout);
   EXPECT_EQ(rmw_qos_profile_rosout_default, default_options.rosout_qos);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   EXPECT_TRUE(rcutils_allocator_is_valid(&(default_options.allocator)));
 
   EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, rcl_node_options_copy(nullptr, &default_options));
@@ -890,12 +910,14 @@ TEST_F(TestNodeFixture, test_rcl_node_options) {
   EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, rcl_node_options_copy(&default_options, &default_options));
   rcl_reset_error();
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   const char * argv[] = {
     "process_name", "--ros-args", "/foo/bar:=", "-r", "bar:=/fiz/buz", "}bar:=fiz", "--", "arg"};
   int argc = sizeof(argv) / sizeof(const char *);
   EXPECT_EQ(
     RCL_RET_OK,
     rcl_parse_arguments(argc, argv, default_options.allocator, &(default_options.arguments)));
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   default_options.use_global_arguments = false;
   default_options.enable_rosout = false;
   default_options.rosout_qos = rmw_qos_profile_default;
@@ -903,12 +925,14 @@ TEST_F(TestNodeFixture, test_rcl_node_options) {
   EXPECT_FALSE(not_ini_options.use_global_arguments);
   EXPECT_FALSE(not_ini_options.enable_rosout);
   EXPECT_EQ(default_options.rosout_qos, not_ini_options.rosout_qos);
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   EXPECT_EQ(
     rcl_arguments_get_count_unparsed(&(default_options.arguments)),
     rcl_arguments_get_count_unparsed(&(not_ini_options.arguments)));
   EXPECT_EQ(
     rcl_arguments_get_count_unparsed_ros(&(default_options.arguments)),
     rcl_arguments_get_count_unparsed_ros(&(not_ini_options.arguments)));
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   EXPECT_EQ(RCL_RET_INVALID_ARGUMENT, rcl_node_options_fini(nullptr));
   rcl_reset_error();
@@ -916,6 +940,7 @@ TEST_F(TestNodeFixture, test_rcl_node_options) {
   EXPECT_EQ(RCL_RET_OK, rcl_node_options_fini(&not_ini_options));
 }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 /* Tests special case node_options
  */
 TEST_F(TestNodeFixture, test_rcl_node_options_fail) {
@@ -932,7 +957,9 @@ TEST_F(TestNodeFixture, test_rcl_node_options_fail) {
 
   EXPECT_EQ(RCL_RET_OK, rcl_arguments_fini(&prev_ini_options.arguments));
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 /* Tests special case node_options
  */
 TEST_F(TestNodeFixture, test_rcl_node_resolve_name) {
@@ -1032,6 +1059,7 @@ TEST_F(TestNodeFixture, test_rcl_node_resolve_name) {
   EXPECT_STREQ("/ns/relative_ns/foo", final_name);
   default_allocator.deallocate(final_name, default_allocator.state);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* Tests special case node_options
  */
