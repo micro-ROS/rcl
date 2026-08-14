@@ -26,7 +26,7 @@ extern "C"
 #include "rcl/node.h"
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/publisher.h"
 #include "rcl/time.h"
 #include "rcl/types.h"
@@ -52,7 +52,7 @@ struct rcl_service_impl_s
   char * remapped_service_name;
 #ifdef RCL_MICROROS_COMPLETE_IMPL
   rosidl_type_hash_t type_hash;
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 };
 
 rcl_service_t
@@ -205,7 +205,7 @@ rcl_service_init(
     goto destroy_service;
   }
   service->impl->type_hash = *type_support->get_type_hash_func(type_support);
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Service initialized");
   TRACETOOLS_TRACEPOINT(
@@ -276,7 +276,7 @@ rcl_service_fini(rcl_service_t * service, rcl_node_t * node)
       RCUTILS_SAFE_FWRITE_TO_STDERR(rcl_get_error_string().str);
       result = RCL_RET_ERROR;
     }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     allocator.deallocate(service->impl->remapped_service_name, allocator.state);
     service->impl->remapped_service_name = NULL;
 

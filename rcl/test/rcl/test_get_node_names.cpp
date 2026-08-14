@@ -157,6 +157,7 @@ TEST_F(TestGetNodeNames, test_rcl_get_node_names) {
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
 }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestGetNodeNames, test_rcl_get_node_names_with_enclave)
 {
   rcl_ret_t ret;
@@ -289,3 +290,4 @@ TEST_F(TestGetNodeNames, test_rcl_get_node_names_with_enclave)
   ret = rcl_node_fini(&node5);
   EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL

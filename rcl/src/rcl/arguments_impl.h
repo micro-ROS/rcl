@@ -21,7 +21,7 @@
 #include "rcl_yaml_param_parser/types.h"
 #else
 typedef bool rcl_params_t;
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "./remap_impl.h"
 
 #ifdef __cplusplus
