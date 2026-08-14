@@ -1733,6 +1733,7 @@ TEST_F(TestActionIntrospection, test_action_client_valid_get_result_service_even
   test_msgs__action__Fibonacci_GetResult_Request__fini(&outgoing_result_request);
 }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionCommunication, test_valid_feedback_content_filter_add_one_goal_id)
 {
   const char * rmw_implementation = rmw_get_implementation_identifier();
@@ -2171,3 +2172,4 @@ TEST_F(TestActionCommunication, test_valid_feedback_content_filter_remove_one_go
   test_msgs__action__Fibonacci_FeedbackMessage__fini(&outgoing_feedback1);
   test_msgs__action__Fibonacci_FeedbackMessage__fini(&outgoing_feedback2);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL

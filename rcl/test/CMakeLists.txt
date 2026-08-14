@@ -101,16 +101,18 @@ ament_add_gtest_executable(test_node
 )
 target_link_libraries(test_node ${PROJECT_NAME} mimick osrf_testing_tools_cpp::memory_tools)
 
-ament_add_gtest_executable(test_remap
-  rcl/test_remap.cpp
-)
-target_include_directories(test_remap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/rcl/)
-target_link_libraries(test_remap ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools)
+if(NOT RCL_MICROROS)
+  ament_add_gtest_executable(test_remap
+    rcl/test_remap.cpp
+  )
+  target_include_directories(test_remap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/rcl/)
+  target_link_libraries(test_remap ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools)
 
-ament_add_gtest_executable(test_remap_integration
-  rcl/test_remap_integration.cpp
-)
-target_link_libraries(test_remap_integration ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools test_msgs::test_msgs)
+  ament_add_gtest_executable(test_remap_integration
+    rcl/test_remap_integration.cpp
+  )
+  target_link_libraries(test_remap_integration ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools test_msgs::test_msgs)
+endif()
 
 ament_add_gtest_executable(test_guard_condition
   rcl/test_guard_condition.cpp
@@ -140,10 +142,12 @@ ament_add_gtest_executable(test_wait
 )
 target_link_libraries(test_wait ${PROJECT_NAME} mimick osrf_testing_tools_cpp::memory_tools)
 
-ament_add_gtest_executable(test_logging_rosout
-  rcl/test_logging_rosout.cpp
-)
-target_link_libraries(test_logging_rosout ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools rcl_interfaces::rcl_interfaces)
+if(NOT RCL_MICROROS)
+  ament_add_gtest_executable(test_logging_rosout
+    rcl/test_logging_rosout.cpp
+  )
+  target_link_libraries(test_logging_rosout ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools rcl_interfaces::rcl_interfaces)
+endif()
 
 ament_add_gtest_executable(test_namespace
   rcl/test_namespace.cpp
@@ -167,37 +171,48 @@ target_include_directories(test_service_event_publisher PRIVATE ${CMAKE_CURRENT_
 target_link_libraries(test_service_event_publisher
   ${PROJECT_NAME} mimick wait_for_entity_helpers osrf_testing_tools_cpp::memory_tools test_msgs::test_msgs)
 
-ament_add_gtest_executable(test_type_description_conversions
-  rcl/test_type_description_conversions.cpp
-)
-target_link_libraries(test_type_description_conversions
-  ${PROJECT_NAME} rosidl_runtime_c::rosidl_runtime_c test_msgs::test_msgs)
+if(NOT RCL_MICROROS)
+  ament_add_gtest_executable(test_type_description_conversions
+    rcl/test_type_description_conversions.cpp
+  )
+  target_link_libraries(test_type_description_conversions
+    ${PROJECT_NAME} rosidl_runtime_c::rosidl_runtime_c test_msgs::test_msgs)
 
-ament_add_gtest_executable(test_node_type_cache
-  rcl/test_node_type_cache.cpp
-)
-target_link_libraries(test_node_type_cache ${PROJECT_NAME} mimick osrf_testing_tools_cpp::memory_tools test_msgs::test_msgs)
+  ament_add_gtest_executable(test_node_type_cache
+    rcl/test_node_type_cache.cpp
+  )
+  target_link_libraries(test_node_type_cache ${PROJECT_NAME} mimick osrf_testing_tools_cpp::memory_tools test_msgs::test_msgs)
+endif()
 
-ament_add_gtest_executable(test_get_type_description_service
-  rcl/test_get_type_description_service.cpp
-)
-target_include_directories(test_get_type_description_service PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/rcl/)
-target_link_libraries(test_get_type_description_service
-  ${PROJECT_NAME} mimick wait_for_entity_helpers osrf_testing_tools_cpp::memory_tools
-  type_description_interfaces::type_description_interfaces)
+if(NOT RCL_MICROROS)
+  ament_add_gtest_executable(test_get_type_description_service
+    rcl/test_get_type_description_service.cpp
+  )
+  target_include_directories(test_get_type_description_service PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/rcl/)
+  target_link_libraries(test_get_type_description_service
+    ${PROJECT_NAME} mimick wait_for_entity_helpers osrf_testing_tools_cpp::memory_tools
+    type_description_interfaces::type_description_interfaces)
+endif()
 
 # Build the C++ gtest executables above with the ROS default C++ standard
 foreach(_rcl_test_target
     test_client test_timer test_context test_get_node_names test_graph
     test_info_by_topic test_info_by_service test_count_matched test_get_actual_qos
-    test_init test_node test_remap test_remap_integration test_guard_condition
+    test_init test_node test_guard_condition
     test_publisher test_publisher_wait_all_ack test_events test_wait
-    test_logging_rosout test_namespace test_rmw_impl_id_check_func
-    test_network_flow_endpoints test_service_event_publisher
-    test_type_description_conversions test_node_type_cache
-    test_get_type_description_service)
+    test_namespace test_rmw_impl_id_check_func
+    test_network_flow_endpoints test_service_event_publisher)
   target_link_libraries(${_rcl_test_target} ament_cmake_ros_core::ament_ros_cxx_standard)
 endforeach()
+
+if(NOT RCL_MICROROS)
+  foreach(_rcl_test_target
+      test_remap test_remap_integration test_logging_rosout
+      test_type_description_conversions test_node_type_cache
+      test_get_type_description_service)
+    target_link_libraries(${_rcl_test_target} ament_cmake_ros_core::ament_ros_cxx_standard)
+  endforeach()
+endif()
 
 function(test_target)
   message(STATUS "Creating tests for '${rmw_implementation}'")
@@ -275,16 +290,18 @@ function(test_target)
   )
   ament_add_test_label(test_node${target_suffix} mimick)
 
-  ament_add_ros_isolated_gtest_test(test_remap
-    TEST_NAME test_remap${target_suffix}
-    ENV ${rmw_implementation_env_var}
-  )
+  if(NOT RCL_MICROROS)
+    ament_add_ros_isolated_gtest_test(test_remap
+      TEST_NAME test_remap${target_suffix}
+      ENV ${rmw_implementation_env_var}
+    )
 
-  ament_add_ros_isolated_gtest_test(test_remap_integration
-    TEST_NAME test_remap_integration${target_suffix}
-    ENV ${rmw_implementation_env_var}
-    TIMEOUT 200
-  )
+    ament_add_ros_isolated_gtest_test(test_remap_integration
+      TEST_NAME test_remap_integration${target_suffix}
+      ENV ${rmw_implementation_env_var}
+      TIMEOUT 200
+    )
+  endif()
 
   ament_add_ros_isolated_gtest_test(test_guard_condition
     TEST_NAME test_guard_condition${target_suffix}
@@ -345,10 +362,12 @@ function(test_target)
   )
   ament_add_test_label(test_wait${target_suffix} mimick)
 
-  ament_add_ros_isolated_gtest_test(test_logging_rosout
-    TEST_NAME test_logging_rosout${target_suffix}
-    ENV ${rmw_implementation_env_var}
-  )
+  if(NOT RCL_MICROROS)
+    ament_add_ros_isolated_gtest_test(test_logging_rosout
+      TEST_NAME test_logging_rosout${target_suffix}
+      ENV ${rmw_implementation_env_var}
+    )
+  endif()
 
   ament_add_ros_isolated_gtest_test(test_namespace
     TEST_NAME test_namespace${target_suffix}
@@ -373,22 +392,26 @@ function(test_target)
   )
   ament_add_test_label(test_service_event_publisher${target_suffix} mimick)
 
-  ament_add_ros_isolated_gtest_test(test_type_description_conversions
-    TEST_NAME test_type_description_conversions${target_suffix}
-    ENV ${rmw_implementation_env_var}
-  )
+  if(NOT RCL_MICROROS)
+    ament_add_ros_isolated_gtest_test(test_type_description_conversions
+      TEST_NAME test_type_description_conversions${target_suffix}
+      ENV ${rmw_implementation_env_var}
+    )
 
-  ament_add_ros_isolated_gtest_test(test_node_type_cache
-    TEST_NAME test_node_type_cache${target_suffix}
-    ENV ${rmw_implementation_env_var}
-  )
-  ament_add_test_label(test_node_type_cache${target_suffix} mimick)
+    ament_add_ros_isolated_gtest_test(test_node_type_cache
+      TEST_NAME test_node_type_cache${target_suffix}
+      ENV ${rmw_implementation_env_var}
+    )
+    ament_add_test_label(test_node_type_cache${target_suffix} mimick)
+  endif()
 
-  ament_add_ros_isolated_gtest_test(test_get_type_description_service
-    TEST_NAME test_get_type_description_service${target_suffix}
-    ENV ${rmw_implementation_env_var}
-  )
-  ament_add_test_label(test_get_type_description_service${target_suffix} mimick)
+  if(NOT RCL_MICROROS)
+    ament_add_ros_isolated_gtest_test(test_get_type_description_service
+      TEST_NAME test_get_type_description_service${target_suffix}
+      ENV ${rmw_implementation_env_var}
+    )
+    ament_add_test_label(test_get_type_description_service${target_suffix} mimick)
+  endif()
 
   # Launch tests
 
@@ -458,12 +481,14 @@ rcl_add_custom_executable(client_fixture
 
 call_for_each_rmw_implementation(test_target)
 
-rcl_add_custom_gtest(test_arguments
-  SRCS rcl/test_arguments.cpp
-  APPEND_LIBRARY_DIRS ${extra_lib_dirs}
-  INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../src/rcl/
-  LIBRARIES ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools
-)
+if(NOT RCL_MICROROS)
+  rcl_add_custom_gtest(test_arguments
+    SRCS rcl/test_arguments.cpp
+    APPEND_LIBRARY_DIRS ${extra_lib_dirs}
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../src/rcl/
+    LIBRARIES ${PROJECT_NAME} osrf_testing_tools_cpp::memory_tools
+  )
+endif()
 
 rcl_add_custom_gtest(test_time
   SRCS rcl/test_time.cpp
@@ -504,13 +529,15 @@ rcl_add_custom_gtest(test_domain_id
 )
 ament_add_test_label(test_domain_id mimick)
 
-rcl_add_custom_gtest(test_logging
-  SRCS rcl/test_logging.cpp
-  APPEND_LIBRARY_DIRS ${extra_lib_dirs}
-  LIBRARIES ${PROJECT_NAME} mimick rcl_interfaces::rcl_interfaces
-    rcl_logging_interface::rcl_logging_interface ${RCL_LOGGING_IMPL}::${RCL_LOGGING_IMPL} osrf_testing_tools_cpp::memory_tools
-)
-ament_add_test_label(test_logging mimick)
+if(NOT RCL_MICROROS)
+  rcl_add_custom_gtest(test_logging
+    SRCS rcl/test_logging.cpp
+    APPEND_LIBRARY_DIRS ${extra_lib_dirs}
+    LIBRARIES ${PROJECT_NAME} mimick rcl_interfaces::rcl_interfaces
+      rcl_logging_interface::rcl_logging_interface ${RCL_LOGGING_IMPL}::${RCL_LOGGING_IMPL} osrf_testing_tools_cpp::memory_tools
+  )
+  ament_add_test_label(test_logging mimick)
+endif()
 
 rcl_add_custom_gtest(test_validate_topic_name
   SRCS rcl/test_validate_topic_name.cpp
@@ -539,12 +566,14 @@ rcl_add_custom_gtest(test_common
   LIBRARIES ${PROJECT_NAME}
 )
 
-rcl_add_custom_gtest(test_log_level
-  SRCS rcl/test_log_level.cpp
-  APPEND_LIBRARY_DIRS ${extra_lib_dirs}
-  LIBRARIES ${PROJECT_NAME} mimick osrf_testing_tools_cpp::memory_tools
-)
-ament_add_test_label(test_log_level mimick)
+if(NOT RCL_MICROROS)
+  rcl_add_custom_gtest(test_log_level
+    SRCS rcl/test_log_level.cpp
+    APPEND_LIBRARY_DIRS ${extra_lib_dirs}
+    LIBRARIES ${PROJECT_NAME} mimick osrf_testing_tools_cpp::memory_tools
+  )
+  ament_add_test_label(test_log_level mimick)
+endif()
 
 rcl_add_custom_gtest(test_subscription_content_filter_options
   SRCS rcl/test_subscription_content_filter_options.cpp
@@ -558,8 +587,10 @@ rcl_add_custom_gtest(test_subscription_buffer_backend_options
   LIBRARIES ${PROJECT_NAME}
 )
 
-rcl_add_custom_gtest(test_type_hash
-  SRCS rcl/test_type_hash.cpp
-  APPEND_LIBRARY_DIRS ${extra_lib_dirs}
-  LIBRARIES ${PROJECT_NAME}
-)
+if(NOT RCL_MICROROS)
+  rcl_add_custom_gtest(test_type_hash
+    SRCS rcl/test_type_hash.cpp
+    APPEND_LIBRARY_DIRS ${extra_lib_dirs}
+    LIBRARIES ${PROJECT_NAME}
+  )
+endif()

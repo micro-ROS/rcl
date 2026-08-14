@@ -726,12 +726,16 @@ TEST_F(TestSubscriptionFixture, test_subscription_option) {
   {
     ASSERT_TRUE(rcutils_set_env("ROS_DISABLE_LOANED_MESSAGES", "0"));
     rcl_subscription_options_t subscription_options = rcl_subscription_get_default_options();
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_FALSE(subscription_options.disable_loaned_message);
+#else
+    // Loaned messages are always disabled under micro-ROS, regardless of env vars.
+    EXPECT_TRUE(subscription_options.disable_loaned_message);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   }
 }
 
 TEST_F(TestSubscriptionFixture, test_subscription_loan_disable) {
-  bool is_fastdds = (std::string(rmw_get_implementation_identifier()).find("rmw_fastrtps") == 0);
   const rosidl_message_type_support_t * ts =
     ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BasicTypes);
   constexpr char topic[] = "pod_msg";
@@ -756,7 +760,9 @@ TEST_F(TestSubscriptionFixture, test_subscription_loan_disable) {
     ASSERT_TRUE(rcutils_set_env("ROS_DISABLE_LOANED_MESSAGES", "0"));
     rcl_subscription_t subscription = rcl_get_zero_initialized_subscription();
     rcl_subscription_options_t subscription_options = rcl_subscription_get_default_options();
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_FALSE(subscription_options.disable_loaned_message);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     rcl_ret_t ret =
       rcl_subscription_init(&subscription, this->node_ptr, ts, topic, &subscription_options);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
@@ -765,11 +771,17 @@ TEST_F(TestSubscriptionFixture, test_subscription_loan_disable) {
       rcl_ret_t ret = rcl_subscription_fini(&subscription, this->node_ptr);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     });
+#ifdef RCL_MICROROS_COMPLETE_IMPL
+    bool is_fastdds = (std::string(rmw_get_implementation_identifier()).find("rmw_fastrtps") == 0);
     if (is_fastdds) {
       EXPECT_TRUE(rcl_subscription_can_loan_messages(&subscription));
     } else {
       EXPECT_FALSE(rcl_subscription_can_loan_messages(&subscription));
     }
+#else
+    // Loaned messages are always disabled under micro-ROS, regardless of RMW capability.
+    EXPECT_FALSE(rcl_subscription_can_loan_messages(&subscription));
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   }
 }
 

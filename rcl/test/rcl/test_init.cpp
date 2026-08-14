@@ -168,6 +168,7 @@ TEST_F(TestRCLFixture, test_rcl_init_invalid_arguments) {
     rcl_reset_error();
     ASSERT_FALSE(rcl_context_is_valid(&context));
   }
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   {
     // If an invalid ROS arg is given, init should fail.
     rcl_context_t context = rcl_get_zero_initialized_context();
@@ -190,6 +191,7 @@ TEST_F(TestRCLFixture, test_rcl_init_invalid_arguments) {
     rcl_reset_error();
     ASSERT_FALSE(rcl_context_is_valid(&context));
   }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   {
     // If security keystore is invalid, init should fail.
     ASSERT_TRUE(rcutils_set_env(ROS_SECURITY_ENABLE_VAR_NAME, "true"));
