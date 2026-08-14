@@ -21,14 +21,14 @@
 
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/arguments.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/error_handling.h"
 #include "rcl/init_options.h"
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/logging.h"
 #include "rcl/logging_rosout.h"
 #include "rcl/node_type_cache.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/rcl.h"
 #include "rcl/remap.h"
 #include "rcl/security.h"
@@ -196,7 +196,7 @@ rcl_node_init(
   node->impl->options = rcl_node_get_default_options();
 #ifdef RCL_MICROROS_COMPLETE_IMPL
   node->impl->registered_types_by_type_hash = rcutils_get_zero_initialized_hash_map();
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   node->context = context;
   // Initialize node impl.
   ret = rcl_node_options_copy(options, &(node->impl->options));
@@ -231,7 +231,7 @@ rcl_node_init(
     allocator->deallocate((char *)local_namespace_, allocator->state);
     local_namespace_ = remapped_namespace;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   // compute fully qualfied name of the node.
   if ('/' == local_namespace_[strlen(local_namespace_) - 1]) {
@@ -248,7 +248,7 @@ rcl_node_init(
   node->impl->logger_name = rcl_create_node_logger_name(name, local_namespace_, allocator);
   RCL_CHECK_FOR_NULL_WITH_MSG(
     node->impl->logger_name, "creating logger name failed", ret = RCL_RET_ERROR; goto fail);
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(
     ROS_PACKAGE_NAME, "Using domain ID of '%zu'", context->impl->rmw_context.actual_domain_id);
@@ -296,7 +296,7 @@ rcl_node_init(
   if (ret != RCL_RET_OK) {
     goto fail;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Node initialized");
   TRACETOOLS_TRACEPOINT(
@@ -320,7 +320,7 @@ fail:
         (fail_ret != RCL_RET_OK),
         ROS_PACKAGE_NAME, "Failed to fini type cache for node: %s", rcl_get_error_string().str);
     }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
     if (node->impl->graph_guard_condition) {
       fail_ret = rcl_guard_condition_fini(node->impl->graph_guard_condition);
@@ -379,7 +379,7 @@ rcl_node_fini(rcl_node_t * node)
     RCL_SET_ERROR_MSG("Unable to fini type cache for node.");
     result = RCL_RET_ERROR;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   rmw_ret_t rmw_ret = rmw_destroy_node(node->impl->rmw_node_handle);
   if (rmw_ret != RMW_RET_OK) {
     RCL_SET_ERROR_MSG(rmw_get_error_string().str);
@@ -401,7 +401,7 @@ rcl_node_fini(rcl_node_t * node)
       return ret;
     }
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   allocator.deallocate(node->impl, allocator.state);
   node->impl = NULL;
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Node finalized");
