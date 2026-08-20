@@ -92,7 +92,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 target_link_libraries(${PROJECT_NAME} PUBLIC
   # TODO(clalancette): rcl_interfaces should be PRIVATE, but downstream depends on it for now
-  $<$<NOT:$<BOOL:${RCL_MICROROS}>>:${rcl_interfaces_TARGETS}>
+  "$<$<NOT:$<BOOL:${RCL_MICROROS}>>:${rcl_interfaces_TARGETS}>"
   # TODO(clalancette): rcl_logging_interface should be PRIVATE, but downstream depends on it for now
   $<$<NOT:$<BOOL:${RCL_MICROROS}>>:rcl_logging_interface::rcl_logging_interface>
   rcutils::rcutils
