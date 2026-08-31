@@ -2,6 +2,11 @@
 Changelog for package rcl
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.5 (2026-08-31)
+-------------------
+* Fix deprecated atomic initialization (`#1332 <https://github.com/ros2/rcl/issues/1332>`_) (`#1333 <https://github.com/ros2/rcl/issues/1333>`_)
+* Contributors: mergify[bot]
+
 10.4.4 (2026-04-30)
 -------------------
 * feat: Added check for double usage of entities in rcl_waitset (`#1206 <https://github.com/ros2/rcl/issues/1206>`_)

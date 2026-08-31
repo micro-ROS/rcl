@@ -2,6 +2,12 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.4.5 (2026-08-31)
+-------------------
+* rcl_yaml_param_parser: Fix build on MacOS (`#1327 <https://github.com/ros2/rcl/issues/1327>`_) (`#1329 <https://github.com/ros2/rcl/issues/1329>`_)
+* Use pthread_once in rcl_yaml_param_parser on Apple (`#1325 <https://github.com/ros2/rcl/issues/1325>`_) (`#1328 <https://github.com/ros2/rcl/issues/1328>`_)
+* Contributors: mergify[bot]
+
 10.4.4 (2026-04-30)
 -------------------
 
