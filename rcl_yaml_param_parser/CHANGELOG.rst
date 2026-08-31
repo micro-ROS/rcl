@@ -2,6 +2,13 @@
 Changelog for package rcl_yaml_param_parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+10.5.2 (2026-08-31)
+-------------------
+* rcl_yaml_param_parser: Fix build on MacOS (`#1327 <https://github.com/ros2/rcl/issues/1327>`_)
+* Use pthread_once in rcl_yaml_param_parser on Apple (`#1325 <https://github.com/ros2/rcl/issues/1325>`_)
+* use C++ 20 in default. (`#1322 <https://github.com/ros2/rcl/issues/1322>`_)
+* Contributors: Michal Sojka, Tobias Fischer, Tomoya Fujita
+
 10.5.1 (2026-05-22)
 -------------------
 
