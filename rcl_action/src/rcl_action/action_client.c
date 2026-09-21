@@ -35,20 +35,26 @@ extern "C"
 #include "rcl/error_handling.h"
 #include "rcl/graph.h"
 #include "rcl/node.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/subscription.h"
 #include "rcl/time.h"
 #include "rcl/types.h"
 #include "rcl/wait.h"
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcutils/error_handling.h"
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcutils/logging_macros.h"
 
 #include "rmw/qos_profiles.h"
 #include "rmw/types.h"
 
 #include "rosidl_runtime_c/action_type_support_struct.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rosidl_runtime_c/type_hash.h"
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 
 rcl_action_client_t
@@ -77,8 +83,10 @@ _rcl_action_get_zero_initialized_client_impl(void)
     0,
     0,
     0,
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     rosidl_get_zero_initialized_type_hash(),
     false
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   };
   return null_action_client;
 }
@@ -106,12 +114,14 @@ _rcl_action_client_fini_impl(
   if (RCL_RET_OK != rcl_subscription_fini(&action_client->impl->status_subscription, node)) {
     ret = RCL_RET_ERROR;
   }
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   if (
     ROSIDL_TYPE_HASH_VERSION_UNSET != action_client->impl->type_hash.version &&
     RCL_RET_OK != rcl_node_type_cache_unregister_type(node, &action_client->impl->type_hash))
   {
     ret = RCL_RET_ERROR;
   }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   allocator.deallocate(action_client->impl->remapped_action_name, allocator.state);
   allocator.deallocate(action_client->impl, allocator.state);
   action_client->impl = NULL;
@@ -245,6 +255,7 @@ rcl_action_client_init(
   SUBSCRIPTION_INIT(feedback);
   SUBSCRIPTION_INIT(status);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   ret = rcl_node_type_cache_register_type(
       node, type_support->get_type_hash_func(type_support),
       type_support->get_type_description_func(type_support),
@@ -255,6 +266,7 @@ rcl_action_client_init(
     goto fail;
   }
   action_client->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Action client initialized");
   return ret;
@@ -799,6 +811,7 @@ rcl_action_client_configure_action_introspection(
   return RCL_RET_OK;
 }
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 /// \internal
 /// Converts a goal ID array (uint8_t) to an array of strings.
 static
@@ -1308,6 +1321,7 @@ err:
 
   return ret;
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #ifdef __cplusplus
 }
 #endif

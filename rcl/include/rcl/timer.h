@@ -35,6 +35,11 @@ extern "C"
 #include "rcl/types.h"
 #include "rcl/visibility_control.h"
 
+// TEMPORARY (micro-ROS): ros2/rcl#1334 dropped this include, but downstream C code
+// (e.g. ros2/rclc rclc_parameter) still relies on getting rmw/qos_profiles.h through it.
+// Remove once rclc includes rmw/qos_profiles.h directly.
+#include "rmw/rmw.h"
+
 typedef struct rcl_timer_impl_s rcl_timer_impl_t;
 
 /// Structure which encapsulates a ROS Timer.
