@@ -25,7 +25,9 @@ struct rcl_publisher_impl_s
   rmw_qos_profile_t actual_qos;
   rcl_context_t * context;
   rmw_publisher_t * rmw_handle;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   rosidl_type_hash_t type_hash;
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 };
 
 #endif  // RCL__PUBLISHER_IMPL_H_
