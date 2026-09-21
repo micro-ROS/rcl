@@ -35,7 +35,9 @@ extern "C"
 #include "rcl/error_handling.h"
 #include "rcl/event_callback.h"
 #include "rcl/node.h"
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/publisher.h"
 #include "rcl/service.h"
 #include "rcl/time.h"
@@ -43,7 +45,9 @@ extern "C"
 #include "rcl/types.h"
 #include "rcl/wait.h"
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcutils/error_handling.h"
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcutils/logging_macros.h"
 #include "rcutils/time.h"
 
@@ -236,7 +240,9 @@ rcl_action_server_init2(
   action_server->impl->goal_handles = NULL;
   action_server->impl->num_goal_handles = 0u;
   action_server->impl->clock = NULL;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   action_server->impl->type_hash = rosidl_get_zero_initialized_type_hash();
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   rcl_ret_t ret = RCL_RET_OK;
 
@@ -296,6 +302,7 @@ rcl_action_server_init2(
     &_enqueue_check_expired_goals);
   (void) dont_care;
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   // Store type hash
   ret = rcl_node_type_cache_register_type(
       node, type_support->get_type_hash_func(type_support),
@@ -308,6 +315,7 @@ rcl_action_server_init2(
     goto fail;
   }
   action_server->impl->type_hash = *type_support->get_type_hash_func(type_support);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   return ret;
 fail:
@@ -373,12 +381,15 @@ rcl_action_server_fini(rcl_action_server_t * action_server, rcl_node_t * node)
     }
     allocator.deallocate(action_server->impl->goal_handles, allocator.state);
     action_server->impl->goal_handles = NULL;
+
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     if (
       ROSIDL_TYPE_HASH_VERSION_UNSET != action_server->impl->type_hash.version &&
       RCL_RET_OK != rcl_node_type_cache_unregister_type(node, &action_server->impl->type_hash))
     {
       ret = RCL_RET_ERROR;
     }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     // Deallocate struct
     allocator.deallocate(action_server->impl, allocator.state);
     action_server->impl = NULL;
