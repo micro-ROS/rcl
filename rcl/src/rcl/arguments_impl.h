@@ -20,7 +20,6 @@
 #include "rcl/allocator.h"
 #include "rcl/arguments.h"
 #include "rcl/log_level.h"
-#include "rcl_yaml_param_parser/types.h"
 #include "./remap_impl.h"
 
 #ifdef __cplusplus
