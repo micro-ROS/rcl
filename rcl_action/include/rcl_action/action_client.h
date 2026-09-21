@@ -781,6 +781,7 @@ rcl_action_client_configure_action_introspection(
   const rcl_publisher_options_t publisher_options,
   rcl_service_introspection_state_t introspection_state);
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 /// Configure feedback subscription content filter to add one goal ID
 /**
  *
@@ -856,6 +857,7 @@ rcl_action_client_configure_feedback_subscription_filter_remove_goal_id(
   const rcl_action_client_t * action_client,
   const uint8_t * goal_id_array,
   size_t array_size);
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
 RCL_ACTION_PUBLIC
 RCL_WARN_UNUSED

@@ -33,8 +33,11 @@ typedef struct rcl_action_client_impl_s
   size_t wait_set_result_client_index;
   size_t wait_set_feedback_subscription_index;
   size_t wait_set_status_subscription_index;
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   rosidl_type_hash_t type_hash;
+#endif // RCL_MICROROS_COMPLETE_IMPL
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   /// Disable the content filter feature for feedback subscription.
   /**
    * The default value is false.
@@ -46,6 +49,7 @@ typedef struct rcl_action_client_impl_s
    * - When calling the content filter-related functions returns RCL_RET_ERROR.
    */
   bool disable_feedback_sub_cft;
+#endif // RCL_MICROROS_COMPLETE_IMPL
 } rcl_action_client_impl_t;
 
 
