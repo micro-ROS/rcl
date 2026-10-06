@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rcl_action)
 
+option(RCL_MICROROS "micro-ROS build mode" ON)
+
 find_package(ament_cmake_ros REQUIRED)
 find_package(ament_cmake_gen_version_h REQUIRED)
 
@@ -133,13 +135,15 @@ if(BUILD_TESTING)
   endfunction()
 
   macro(targets)
-    custom_test_c(test_action_communication
-      "test/rcl_action/test_action_communication.cpp")
-    custom_test_c(test_action_interaction
-      "test/rcl_action/test_action_interaction.cpp")
-
-    custom_test_c(test_graph
-      "test/rcl_action/test_graph.cpp")
+    # all three need the graph, which is unavailable in micro-ROS
+    if(NOT RCL_MICROROS)
+      custom_test_c(test_action_communication
+        "test/rcl_action/test_action_communication.cpp")
+      custom_test_c(test_action_interaction
+        "test/rcl_action/test_action_interaction.cpp")
+      custom_test_c(test_graph
+        "test/rcl_action/test_graph.cpp")
+    endif()
   endmacro()
 
   call_for_each_rmw_implementation(targets)
@@ -210,19 +214,21 @@ if(BUILD_TESTING)
       src
     )
   endif()
-  ament_add_gtest(test_action_name_remapping
-    test/rcl_action/test_action_name_remapping.cpp
-  )
-  if(TARGET test_action_name_remapping)
-    target_link_libraries(test_action_name_remapping
-      ${PROJECT_NAME}
-      osrf_testing_tools_cpp::memory_tools
-      rcl::rcl
-      ${test_msgs_TARGETS}
+  if(NOT RCL_MICROROS)
+    ament_add_gtest(test_action_name_remapping
+      test/rcl_action/test_action_name_remapping.cpp
     )
-    target_include_directories(test_action_name_remapping PRIVATE
-      src
-    )
+    if(TARGET test_action_name_remapping)
+      target_link_libraries(test_action_name_remapping
+        ${PROJECT_NAME}
+        osrf_testing_tools_cpp::memory_tools
+        rcl::rcl
+        ${test_msgs_TARGETS}
+      )
+      target_include_directories(test_action_name_remapping PRIVATE
+        src
+      )
+    endif()
   endif()
 endif()
 
