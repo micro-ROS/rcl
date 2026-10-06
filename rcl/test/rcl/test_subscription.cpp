@@ -261,6 +261,8 @@ TEST_F(TestSubscriptionFixture, test_subscription_bad_init) {
 
 /* Basic nominal test of a subscription
  */
+// waits for a matched subscription, needs RMW_UXRCE_GRAPH=ON
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_nominal) {
   rcl_ret_t ret;
   rcl_publisher_t publisher = rcl_get_zero_initialized_publisher();
@@ -327,9 +329,12 @@ TEST_F(TestSubscriptionFixture, test_subscription_nominal) {
   #endif
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* Basic nominal test of a publisher with a string.
  */
+// waits for a matched subscription, needs RMW_UXRCE_GRAPH=ON
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_nominal_string) {
   rcl_ret_t ret;
   rcl_publisher_t publisher = rcl_get_zero_initialized_publisher();
@@ -376,9 +381,12 @@ TEST_F(TestSubscriptionFixture, test_subscription_nominal_string) {
     ASSERT_EQ(std::string(test_string), std::string(msg.string_value.data, msg.string_value.size));
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* Basic nominal test of a subscription taking a sequence.
  */
+// waits for a matched subscription, needs RMW_UXRCE_GRAPH=ON
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_nominal_string_sequence) {
   using namespace std::chrono_literals;
   rcl_ret_t ret;
@@ -545,9 +553,12 @@ TEST_F(TestSubscriptionFixture, test_subscription_nominal_string_sequence) {
       std::string(seq->data[0].string_value.data, seq->data[0].string_value.size));
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* Basic nominal test of a subscription with take_serialize msg
  */
+// waits for a matched subscription, needs RMW_UXRCE_GRAPH=ON
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_serialized) {
   rcl_ret_t ret;
   rcl_publisher_t publisher = rcl_get_zero_initialized_publisher();
@@ -621,9 +632,12 @@ TEST_F(TestSubscriptionFixture, test_subscription_serialized) {
       rmw_serialized_message_fini(&serialized_msg_rcv)) << rcl_get_error_string().str;
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* Basic test for subscription loan functions
  */
+// loaned messages are not supported by rmw_microxrcedds
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_loaned) {
   rcl_ret_t ret;
   rcl_publisher_t publisher = rcl_get_zero_initialized_publisher();
@@ -702,6 +716,7 @@ TEST_F(TestSubscriptionFixture, test_subscription_loaned) {
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 TEST_F(TestSubscriptionFixture, test_subscription_option) {
   {
@@ -726,12 +741,16 @@ TEST_F(TestSubscriptionFixture, test_subscription_option) {
   {
     ASSERT_TRUE(rcutils_set_env("ROS_DISABLE_LOANED_MESSAGES", "0"));
     rcl_subscription_options_t subscription_options = rcl_subscription_get_default_options();
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_FALSE(subscription_options.disable_loaned_message);
+#else
+    // Loaned messages are always disabled under micro-ROS, regardless of env vars.
+    EXPECT_TRUE(subscription_options.disable_loaned_message);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   }
 }
 
 TEST_F(TestSubscriptionFixture, test_subscription_loan_disable) {
-  bool is_fastdds = (std::string(rmw_get_implementation_identifier()).find("rmw_fastrtps") == 0);
   const rosidl_message_type_support_t * ts =
     ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BasicTypes);
   constexpr char topic[] = "pod_msg";
@@ -756,7 +775,9 @@ TEST_F(TestSubscriptionFixture, test_subscription_loan_disable) {
     ASSERT_TRUE(rcutils_set_env("ROS_DISABLE_LOANED_MESSAGES", "0"));
     rcl_subscription_t subscription = rcl_get_zero_initialized_subscription();
     rcl_subscription_options_t subscription_options = rcl_subscription_get_default_options();
+#ifdef RCL_MICROROS_COMPLETE_IMPL
     EXPECT_FALSE(subscription_options.disable_loaned_message);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     rcl_ret_t ret =
       rcl_subscription_init(&subscription, this->node_ptr, ts, topic, &subscription_options);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
@@ -765,11 +786,17 @@ TEST_F(TestSubscriptionFixture, test_subscription_loan_disable) {
       rcl_ret_t ret = rcl_subscription_fini(&subscription, this->node_ptr);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     });
+#ifdef RCL_MICROROS_COMPLETE_IMPL
+    bool is_fastdds = (std::string(rmw_get_implementation_identifier()).find("rmw_fastrtps") == 0);
     if (is_fastdds) {
       EXPECT_TRUE(rcl_subscription_can_loan_messages(&subscription));
     } else {
       EXPECT_FALSE(rcl_subscription_can_loan_messages(&subscription));
     }
+#else
+    // Loaned messages are always disabled under micro-ROS, regardless of RMW capability.
+    EXPECT_FALSE(rcl_subscription_can_loan_messages(&subscription));
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   }
 }
 
@@ -910,6 +937,8 @@ TEST_F(TestSubscriptionFixture, test_bad_return_loaned_message) {
 
 /* A subscription with a content filtered topic setting.
  */
+// content filters are not supported by rmw_microxrcedds
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_content_filtered) {
   const char * filter_expression1 = "string_value = 'FilteredData'";
   rcl_ret_t ret;
@@ -1177,9 +1206,12 @@ TEST_F(TestSubscriptionFixture, test_subscription_content_filtered) {
       std::string(msg.string_value.data, msg.string_value.size));
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* A subscription without a content filtered topic setting at beginning.
  */
+// content filters are not supported by rmw_microxrcedds
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_not_initialized_with_content_filtering) {
   rcl_ret_t ret;
   rcl_publisher_t publisher = rcl_get_zero_initialized_publisher();
@@ -1332,6 +1364,7 @@ TEST_F(TestSubscriptionFixture, test_subscription_not_initialized_with_content_f
     ASSERT_TRUE(test_filtered_value == msg.int32_value);
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 TEST_F(TestSubscriptionFixture, test_get_options) {
   rcl_ret_t ret;
@@ -1396,6 +1429,8 @@ TEST_F(TestSubscriptionFixtureInit, test_subscription_bad_take) {
   rcl_reset_error();
 }
 
+// waits for a matched subscription, needs RMW_UXRCE_GRAPH=ON
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestSubscriptionFixture, test_subscription_option_ignore_local_publications) {
   // The current Implementations for ignoring local publications
   // While creating a subscription, the ignore_local_publications option is set to true
@@ -1539,6 +1574,7 @@ TEST_F(TestSubscriptionFixture, test_subscription_option_ignore_local_publicatio
     ASSERT_EQ(RCL_RET_SUBSCRIPTION_TAKE_FAILED, ret);
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* bad take_serialized
  */
@@ -1909,6 +1945,8 @@ protected:
 
 /* Test subscription to receive complex message from a publisher with typesupport settings.
  */
+// waits for a matched subscription, needs RMW_UXRCE_GRAPH=ON
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_P(TestSubscriptionFixtureParam, test_subscription_complex_message) {
   rcl_ret_t ret;
   const rosidl_message_type_support_t * ts_pub;
@@ -1995,3 +2033,4 @@ INSTANTIATE_TEST_SUITE_P(
     TestParameters(TestParameters::TYPESUPPORT::CPP, TestParameters::TYPESUPPORT::C),
     TestParameters(TestParameters::TYPESUPPORT::CPP, TestParameters::TYPESUPPORT::CPP)
 ));
+#endif  // RCL_MICROROS_COMPLETE_IMPL
