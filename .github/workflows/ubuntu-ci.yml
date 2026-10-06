@@ -1,0 +1,265 @@
+name: ubuntu CI micro-ROS rcl
+
+# The container image is derived from the branch under test, which works
+# because the branch names are the distro names:
+#  - humble  -> ros:humble-ros-base   (Ubuntu 22.04 jammy)
+#  - jazzy   -> ros:jazzy-ros-base    (Ubuntu 24.04 noble)
+#  - kilted  -> ros:kilted-ros-base   (Ubuntu 24.04 noble)
+#  - lyrical -> ros:lyrical-ros-base  (Ubuntu 26.04 resolute)
+#  - rolling -> ros:rolling-ros-base  (Ubuntu 26.04 resolute)
+#
+# rcl is tested against rmw_microxrcedds, the middleware micro-ROS actually ships.
+# `-DRCL_MICROROS=ON` only selects rcl's stripped code paths; it says nothing about
+# the RMW, so without the stack below rcl would bind to the image's rmw_fastrtps_cpp
+# and none of this fork's target middleware would ever be exercised.
+#
+# That means building the XRCE client stack, the type support generator and the Agent
+# from source (none of them are released into a ROS distro), plus rebuilding every
+# interface package the tests use: the image's binary test_msgs carries DDS type
+# support only, and under XRCE all serialization happens on the client.
+#
+# rcl registers its tests once per *available* RMW (call_for_each_rmw_implementation),
+# so one build yields both __rmw_microxrcedds and __rmw_fastrtps_cpp entries and the
+# two test steps below select between them with ctest. Note that rcl_action registers
+# only part of its suite that way and rcl_lifecycle none of it: those tests carry no
+# RMW suffix and follow the RMW_IMPLEMENTATION in the environment instead.
+#
+# Besides push and pull_request, this is callable via workflow_call so a scheduled
+# workflow on the default branch can run it once per distro branch. Note that
+# `uses: ./.github/workflows/ci.yml` always resolves to the *caller's* copy of this
+# file, so the default branch's copy is what runs for every branch it tests; only
+# the checked-out source and the container image follow `inputs.branch`.
+
+on:
+  push:
+    branches:
+      - humble
+      - jazzy
+      - kilted
+      - lyrical
+      - rolling
+  pull_request:
+    branches:
+      - humble
+      - jazzy
+      - kilted
+      - lyrical
+      - rolling
+  workflow_call:
+    inputs:
+      branch:
+        description: >
+          Distro branch to check out and test. Leave unset for push and
+          pull_request, where the triggering ref is used instead.
+        type: string
+        required: false
+        default: ''
+  # To enable manual trigger
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.branch }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  rcl_microros_ci:
+    runs-on: ubuntu-latest
+    # inputs.branch is used when this workflow is called
+    # github.base_ref covers pull requests
+    # github.ref_name is the branch on a push
+    container: ros:${{ inputs.branch || github.base_ref || github.ref_name }}-ros-base
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Empty on push and pull_request, which leaves checkout's own behaviour
+          # intact — importantly the PR merge ref, so PRs keep testing the merge
+          # result rather than the base branch.
+          ref: ${{ inputs.branch }}
+          path: src/rcl
+
+      - name: Download dependencies
+        run: |
+          : "${ROS_DISTRO:?not set — is the container a ros:<distro>-ros-base image?}"
+          . /opt/ros/$ROS_DISTRO/setup.bash
+
+          # The image ships no apt lists (every layer of its Dockerfile ends in
+          # `rm -rf /var/lib/apt/lists/*`) and rosdep does not refresh them itself,
+          # so this is required before rosdep can install anything.
+          apt-get update
+          apt-get install -y git
+
+          # Micro-CDR and the XRCE Client are distro independent and pinned; the RMW,
+          # the type support generator and the Agent wrapper track the distro.
+          git clone -b v2.0.2 https://github.com/eProsima/Micro-CDR src/Micro-CDR
+          git clone -b v3.0.2 https://github.com/eProsima/Micro-XRCE-DDS-Client src/Micro-XRCE-DDS-Client
+          git clone -b $ROS_DISTRO https://github.com/micro-ROS/rmw_microxrcedds src/rmw_microxrcedds
+          git clone -b $ROS_DISTRO https://github.com/micro-ROS/rosidl_typesupport_microxrcedds src/rosidl_typesupport_microxrcedds
+          git clone -b $ROS_DISTRO https://github.com/micro-ROS/micro-ROS-Agent src/micro-ROS-Agent
+          touch src/rosidl_typesupport_microxrcedds/test/COLCON_IGNORE
+
+          # The tests' interface packages must be rebuilt from source so the micro-ROS
+          # type support is generated for them; the binaries in the image have DDS type
+          # support only. rcl_interfaces carries test_msgs, action_msgs, lifecycle_msgs,
+          # service_msgs, builtin_interfaces and type_description_interfaces.
+          git clone -b $ROS_DISTRO https://github.com/ros2/rcl_interfaces src/rcl_interfaces
+          git clone -b $ROS_DISTRO https://github.com/ros2/test_interface_files src/test_interface_files
+          git clone -b $ROS_DISTRO https://github.com/ros2/unique_identifier_msgs src/unique_identifier_msgs
+
+          # rosdep is already initialised in the image; only its cache is stale.
+          # microcdr, microxrcedds_client and microxrcedds_agent are built from source
+          # here (the Agent's superbuild clones the XRCE Agent itself), so skip those keys.
+          rosdep update --rosdistro $ROS_DISTRO
+          rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y \
+            --skip-keys "microcdr microxrcedds_client microxrcedds_agent"
+
+      - name: Build
+        id: build
+        # GitHub replaces the image's entrypoint for container jobs, so
+        # /ros_entrypoint.sh never runs and each step must source ROS itself.
+        #
+        # The build is staged because ordering is load-bearing: nothing *declares* a
+        # dependency on the type support generator — rosidl_generate_interfaces finds
+        # generators through the ament index at configure time — so an interface package
+        # configured before the generator is installed silently ends up without
+        # micro-ROS type support. Re-sourcing between stages is what makes it visible.
+        # Staging also gives per-package cmake args without a colcon.meta.
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+
+          # 1. Type support generators, so every interface package built later sees them
+          colcon build \
+            --event-handlers console_direct+ \
+            --packages-up-to rosidl_typesupport_microxrcedds_c rosidl_typesupport_microxrcedds_cpp \
+            --cmake-args -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON
+          . install/local_setup.bash
+
+          # 2. The RMW under test and the XRCE client, sized with micro-ROS's own host
+          #    profile (micro_ros_setup/config/host/generic/client-host-colcon.meta). The
+          #    pools are per process and the stock 4 is exceeded immediately; the Agent
+          #    address is compile-time, so it has to match the Agent command below.
+          #    UCLIENT_PROFILE_MULTITHREAD reaches rmw_microxrcedds through the client's
+          #    installed config.h and is what guards both the shared XRCE session and the
+          #    RMW's own static mempools — rcl's tests drive them from several threads.
+          #    This stage must precede rcl: call_for_each_rmw_implementation only emits the
+          #    __rmw_microxrcedds test entries if the RMW is installed when rcl is configured.
+          colcon build \
+            --event-handlers console_direct+ \
+            --packages-up-to rmw_microxrcedds \
+            --cmake-args -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON \
+              -DUCLIENT_PROFILE_MULTITHREAD=ON \
+              -DRMW_UXRCE_TRANSPORT=udp \
+              -DRMW_UXRCE_DEFAULT_UDP_IP=127.0.0.1 -DRMW_UXRCE_DEFAULT_UDP_PORT=8888 \
+              -DRMW_UXRCE_MAX_NODES=15 -DRMW_UXRCE_MAX_PUBLISHERS=15 \
+              -DRMW_UXRCE_MAX_SUBSCRIPTIONS=15 -DRMW_UXRCE_MAX_SERVICES=15 \
+              -DRMW_UXRCE_MAX_CLIENTS=15 \
+              -DRMW_UXRCE_STREAM_HISTORY=32 -DRMW_UXRCE_MAX_HISTORY=10 \
+              -DRMW_UXRCE_TOPIC_NAME_MAX_LENGTH=120 -DRMW_UXRCE_TYPE_NAME_MAX_LENGTH=150
+          . install/local_setup.bash
+
+          # 3. The interface packages other interface packages depend on, before the rest.
+          #    Without this stage test_msgs configures while service_msgs and
+          #    unique_identifier_msgs still resolve to the image's binaries, and its
+          #    micro-ROS type support links their Fast DDS type support instead — which
+          #    only surfaces later as an undefined symbol when an action type is used.
+          #    micro_ros_setup's host build.sh stages these two for the same reason.
+          #    service_msgs doesn't exist in humble, so only add it if present.
+          packages_stage3="unique_identifier_msgs builtin_interfaces"
+          if [ -d src/rcl_interfaces/service_msgs ]; then
+            packages_stage3="service_msgs $packages_stage3"
+          fi
+          colcon build \
+            --event-handlers console_direct+ \
+            --packages-up-to $packages_stage3 \
+            --cmake-args -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON
+          . install/local_setup.bash
+
+          # 4. The packages under test, pulling in the interface packages as dependencies
+          #    — now regenerated with micro-ROS type support. BUILD_TESTING stays on, and
+          #    RelWithDebInfo keeps asserts and symbols: this suite has never run against
+          #    this middleware, so a usable backtrace is worth more than -O3.
+          colcon build \
+            --event-handlers console_direct+ \
+            --packages-up-to rcl rcl_action rcl_lifecycle \
+            --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON -DRCL_MICROROS=ON
+          . install/local_setup.bash
+
+          # 5. The Agent is test infrastructure only: built last, so a failure in the
+          #    packages under test is reported before the several minutes this takes, and
+          #    built optimised since we never debug it. Its superbuild clones and builds
+          #    the XRCE Agent itself, taking fastcdr and fastdds from the image.
+          colcon build \
+            --event-handlers console_direct+ \
+            --packages-up-to micro_ros_agent \
+            --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+      # No `if:` here on purpose: this step carries the implicit success() condition, so
+      # it is skipped when the build failed, and its own failure fails the job. This is
+      # the middleware the fork targets, so it is the gate.
+      - name: Test (micro XRCE-DDS)
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          . install/local_setup.bash
+
+          # start an Agent
+          install/micro_ros_agent/lib/micro_ros_agent/micro_ros_agent udp4 --port 8888 -d -v4 &
+          agent_pid=$!
+          sleep 1
+
+          # rcl registers each middleware test once per available RMW, as <test>__<rmw>.
+          # Excluding the Fast DDS ones leaves this middleware's copies plus the entries
+          # that carry no RMW suffix. It assumes rmw_fastrtps_cpp is the only DDS implementation
+          # in the image, which holds for every ros-base image these branches use.
+          # RMW_IMPLEMENTATION is needed because the un-suffixed entries are not
+          # middleware free: every rcl test binary resolves an RMW on start-up, so
+          # without it they would run against the image's Fast DDS. The suffixed ones
+          # set it themselves through ctest and are unaffected.
+          # What cannot run here is guarded in the sources or in CMakeLists.
+          RMW_IMPLEMENTATION=rmw_microxrcedds colcon test \
+            --event-handlers console_direct+ \
+            --return-code-on-test-failure \
+            --packages-select rcl \
+            --ctest-args -E "__rmw_fastrtps_cpp"
+
+          # rcl_action registers only three targets per RMW (all guarded in its
+          # CMakeLists) and rcl_lifecycle none, so their tests carry no RMW suffix and
+          # take the middleware from the environment instead of a ctest filter.
+          RMW_IMPLEMENTATION=rmw_microxrcedds colcon test \
+            --event-handlers console_direct+ \
+            --return-code-on-test-failure \
+            --packages-select rcl_action rcl_lifecycle
+
+          # kill Agent so the next step runs without it
+          kill $agent_pid
+          wait $agent_pid || true
+
+      - name: Test results (micro XRCE-DDS)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          colcon test-result --verbose
+
+      - name: Test (Fast DDS)
+        # the same reduced suite against Fast DDS
+        # it excludes the uxrce test entries
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          . install/local_setup.bash
+          colcon test \
+            --event-handlers console_direct+ \
+            --return-code-on-test-failure \
+            --packages-select rcl rcl_action rcl_lifecycle \
+            --ctest-args -E "__rmw_microxrcedds"
+
+      - name: Test results (Fast DDS)
+        # this colcon test-result covers both runs
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          . /opt/ros/$ROS_DISTRO/setup.bash
+          colcon test-result --verbose
