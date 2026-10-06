@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.uml": "plantuml",
+        "service_event_publisher.h": "c"
+    }
+}
