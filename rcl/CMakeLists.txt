@@ -130,9 +130,9 @@ if(NOT RCL_MICROROS)
 endif()
 
 if(NOT RCL_MICROROS)
-target_compile_definitions(${PROJECT_NAME}
-  PUBLIC
-    RCL_MICROROS_COMPLETE_IMPL
+  target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+      RCL_MICROROS_COMPLETE_IMPL
   )
 endif()
 
