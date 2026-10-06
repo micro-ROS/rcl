@@ -228,6 +228,10 @@ rcl_init(
     context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
       "/", context->impl->allocator);
   }
+#else
+  context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
+    "/", context->impl->allocator);
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   if (!context->impl->init_options.impl->rmw_init_options.enclave) {
     RCL_SET_ERROR_MSG("failed to set context name");
@@ -265,7 +269,6 @@ rcl_init(
     fail_ret = ret;
     goto fail;
   }
-#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   // Initialize rmw_init.
   rmw_ret_t rmw_ret = rmw_init(
