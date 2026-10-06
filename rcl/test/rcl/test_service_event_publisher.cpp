@@ -196,6 +196,8 @@ TEST_F(TestServiceEventPublisherFixture, test_service_event_publisher_init_and_f
 
 /* Test sending service introspection message via service_event_publisher.h
  */
+// needs a matched subscriber, which needs the graph
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestServiceEventPublisherFixture, test_service_event_publisher_send_message_nominal)
 {
   uint8_t guid[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -262,6 +264,7 @@ TEST_F(TestServiceEventPublisherFixture, test_service_event_publisher_send_messa
   ASSERT_EQ(test_req.uint16_value, event_msg.request.data[0].uint16_value);
   ASSERT_EQ(test_req.uint32_value, event_msg.request.data[0].uint32_value);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 TEST_F(TestServiceEventPublisherFixture, test_service_event_publisher_send_message_return_codes)
 {
@@ -503,6 +506,8 @@ protected:
 
 /* Whole test of service event publisher with service, client, and subscription
  */
+// needs a matched subscriber, which needs the graph
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(
   TestServiceEventPublisherWithServicesAndClientsFixture,
   test_service_event_publisher_with_subscriber)
@@ -592,9 +597,12 @@ TEST_F(
   ASSERT_EQ(1U, event_msg.response.size);
   ASSERT_EQ(2U, event_msg.response.data[0].uint32_value);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 /* Integration level test with disabling service events
  */
+// needs a matched subscriber, which needs the graph
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(
   TestServiceEventPublisherWithServicesAndClientsFixture,
   test_service_event_publisher_with_subscriber_disable_service_events)
@@ -682,3 +690,4 @@ TEST_F(
   ASSERT_EQ(service_msgs__msg__ServiceEventInfo__RESPONSE_RECEIVED, event_msg.info.event_type);
   ASSERT_EQ(2U, event_msg.response.data[0].uint32_value);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
