@@ -216,7 +216,17 @@ rcl_init(
     fail_ret = ret;
     goto fail;
   }
-#endif  //RCL_COMMAND_LINE_ENABLED
+#else
+  // without the command line there is no enclave to read, and rmw_microxrcedds
+  // expects a valid one rather than NULL
+  context->impl->init_options.impl->rmw_init_options.enclave = rcutils_strdup(
+    "/", context->impl->allocator);
+  if (!context->impl->init_options.impl->rmw_init_options.enclave) {
+    RCL_SET_ERROR_MSG("failed to set context name");
+    fail_ret = RCL_RET_BAD_ALLOC;
+    goto fail;
+  }
+#endif  // RCL_COMMAND_LINE_ENABLED
 
   // Initialize rmw_init.
   rmw_ret_t rmw_ret = rmw_init(
