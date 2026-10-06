@@ -239,12 +239,12 @@ rcl_subscription_get_default_options(void)
   default_options.allocator = rcl_get_default_allocator();
   default_options.rmw_subscription_options = rmw_get_default_subscription_options();
 
-#ifdef RCL_MICROROS_COMPLETE_IMPL
   // Load disable flag to LoanedMessage via environmental variable.
   // TODO(clalancette): This is kind of a copy of rcl_get_disable_loaned_message(), but we need
   // more information than that function provides.
   default_options.disable_loaned_message = true;
 
+#ifdef RCL_MICROROS_COMPLETE_IMPL
   const char * env_val = NULL;
   const char * env_error_str = rcutils_get_env(RCL_DISABLE_LOANED_MESSAGES_ENV_VAR, &env_val);
   if (NULL != env_error_str) {
