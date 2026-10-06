@@ -16,7 +16,7 @@
 
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include <yaml.h>
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 #include "rcl/allocator.h"
 #include "rcl/error_handling.h"
@@ -196,7 +196,7 @@ static int emit_type_description(
   }
   return end_sequence(emitter) && end_mapping(emitter);
 }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 rcl_ret_t
 rcl_type_description_to_hashable_json(
@@ -249,7 +249,7 @@ error:
   (void)type_description;
   (void)output_repr;
   return RCL_RET_UNSUPPORTED;
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 }
 
 rcl_ret_t
@@ -285,5 +285,5 @@ rcl_calculate_type_hash(
   (void)type_description;
   (void)output_hash;
   return RCL_RET_UNSUPPORTED;
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 }

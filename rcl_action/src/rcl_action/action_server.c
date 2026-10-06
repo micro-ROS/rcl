@@ -28,7 +28,7 @@ extern "C"
 
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/error_handling.h"
 #include "rcl/rcl.h"
 #include "rcl/time.h"
@@ -170,7 +170,7 @@ rcl_action_server_init(
   action_server->impl->clock = NULL;
 #ifdef RCL_MICROROS_COMPLETE_IMPL
   action_server->impl->type_hash = rosidl_get_zero_initialized_type_hash();
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   rcl_ret_t ret = RCL_RET_OK;
   // Resolve action name
@@ -233,7 +233,7 @@ rcl_action_server_init(
     goto fail;
   }
   action_server->impl->type_hash = *type_support->get_type_hash_func(type_support);
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   return ret;
 fail:
@@ -300,7 +300,7 @@ rcl_action_server_fini(rcl_action_server_t * action_server, rcl_node_t * node)
     {
       ret = RCL_RET_ERROR;
     }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
     // Deallocate struct
     allocator.deallocate(action_server->impl, allocator.state);
     action_server->impl = NULL;

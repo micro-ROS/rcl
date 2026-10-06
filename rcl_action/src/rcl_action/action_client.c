@@ -27,7 +27,7 @@ extern "C"
 
 #ifdef RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/node_type_cache.h"
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 #include "rcl/client.h"
 #include "rcl/error_handling.h"
 #include "rcl/graph.h"
@@ -69,7 +69,7 @@ _rcl_action_get_zero_initialized_client_impl(void)
     0,
 #ifdef RCL_MICROROS_COMPLETE_IMPL
     rosidl_get_zero_initialized_type_hash()
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   };
   return null_action_client;
 }
@@ -104,7 +104,7 @@ _rcl_action_client_fini_impl(
   {
     ret = RCL_RET_ERROR;
   }
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
   allocator.deallocate(action_client->impl->remapped_action_name, allocator.state);
   allocator.deallocate(action_client->impl, allocator.state);
   action_client->impl = NULL;
@@ -267,7 +267,7 @@ rcl_action_client_init(
     goto fail;
   }
   action_client->impl->type_hash = *type_support->get_type_hash_func(type_support);
-#endif // RCL_MICROROS_COMPLETE_IMPL
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
   RCUTILS_LOG_DEBUG_NAMED(ROS_PACKAGE_NAME, "Action client initialized");
   return ret;
