@@ -852,6 +852,8 @@ TEST_F(TestActionServer, test_action_server_get_options)
   EXPECT_NE(options, nullptr) << rcl_get_error_string().str;
 }
 
+// service introspection counts publishers through the graph, unavailable in micro-ROS
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionServer, test_default_internal_services_introspection_status)
 {
   // Check valid action server
@@ -901,6 +903,7 @@ TEST_F(TestActionServer, test_set_internal_services_introspection_contents)
 
   check_set_services_introspection(RCL_SERVICE_INTROSPECTION_CONTENTS, 1);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 class TestActionServerCancelPolicy : public TestActionServer
 {
@@ -1078,6 +1081,8 @@ TEST_F(TestActionServerCancelPolicy, test_action_process_cancel_request_by_time_
   EXPECT_EQ(RCL_RET_OK, rcl_action_cancel_response_fini(&cancel_response));
 }
 
+// fault injection reaches error paths micro-ROS does not build
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionServer, action_server_init_fini_maybe_fail)
 {
   rcl_allocator_t allocator = rcl_get_default_allocator();
@@ -1130,6 +1135,7 @@ TEST_F(TestActionServer, action_server_init_fini_maybe_fail)
     rcl_reset_error();
   });
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 TEST_F(TestActionServerCancelPolicy, test_action_process_cancel_request_maybe_fail)
 {

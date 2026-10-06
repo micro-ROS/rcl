@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(rcl_action)
 
+option(RCL_MICROROS "micro-ROS build mode" ON)
+
 find_package(ament_cmake_ros REQUIRED)
 find_package(ament_cmake_gen_version_h REQUIRED)
 
@@ -102,55 +104,60 @@ if(BUILD_TESTING)
     target_compile_definitions(test_action_client PUBLIC RCUTILS_ENABLE_FAULT_INJECTION)
   endif()
 
-  ament_add_gtest_executable(test_action_communication test/rcl_action/test_action_communication.cpp)
-  target_include_directories(test_action_communication PUBLIC src)
-  target_link_libraries(test_action_communication
-    ${PROJECT_NAME}
-    action_msgs::action_msgs
-    osrf_testing_tools_cpp::memory_tools
-    rcl::rcl
-    rosidl_runtime_c::rosidl_runtime_c
-    test_msgs::test_msgs)
+  if(NOT RCL_MICROROS)
+    ament_add_gtest_executable(test_action_communication test/rcl_action/test_action_communication.cpp)
+    target_include_directories(test_action_communication PUBLIC src)
+    target_link_libraries(test_action_communication
+      ${PROJECT_NAME}
+      action_msgs::action_msgs
+      osrf_testing_tools_cpp::memory_tools
+      rcl::rcl
+      rosidl_runtime_c::rosidl_runtime_c
+      test_msgs::test_msgs)
 
-  ament_add_gtest_executable(test_action_interaction test/rcl_action/test_action_interaction.cpp)
-  target_link_libraries(test_action_interaction
-    ${PROJECT_NAME}
-    action_msgs::action_msgs
-    osrf_testing_tools_cpp::memory_tools
-    rcl::rcl
-    rosidl_runtime_c::rosidl_runtime_c
-    test_msgs::test_msgs)
+    ament_add_gtest_executable(test_action_interaction test/rcl_action/test_action_interaction.cpp)
+    target_link_libraries(test_action_interaction
+      ${PROJECT_NAME}
+      action_msgs::action_msgs
+      osrf_testing_tools_cpp::memory_tools
+      rcl::rcl
+      rosidl_runtime_c::rosidl_runtime_c
+      test_msgs::test_msgs)
 
-  ament_add_gtest_executable(test_graph test/rcl_action/test_graph.cpp)
-  target_compile_definitions(test_graph PUBLIC RCUTILS_ENABLE_FAULT_INJECTION)
-  target_link_libraries(test_graph
-    ${PROJECT_NAME}
-    action_msgs::action_msgs
-    osrf_testing_tools_cpp::memory_tools
-    rcl::rcl
-    rcutils::rcutils
-    rosidl_runtime_c::rosidl_runtime_c
-    test_msgs::test_msgs)
+    ament_add_gtest_executable(test_graph test/rcl_action/test_graph.cpp)
+    target_compile_definitions(test_graph PUBLIC RCUTILS_ENABLE_FAULT_INJECTION)
+    target_link_libraries(test_graph
+      ${PROJECT_NAME}
+      action_msgs::action_msgs
+      osrf_testing_tools_cpp::memory_tools
+      rcl::rcl
+      rcutils::rcutils
+      rosidl_runtime_c::rosidl_runtime_c
+      test_msgs::test_msgs)
+  endif()
 
   function(test_targets)
     message(STATUS "Creating tests for '${rmw_implementation}'")
     set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
 
-    ament_add_ros_isolated_gtest_test(test_action_communication
-      TEST_NAME test_action_communication${target_suffix}
-      ENV ${rmw_implementation_env_var}
-    )
+    # all three need the graph, which is unavailable in micro-ROS
+    if(NOT RCL_MICROROS)
+      ament_add_ros_isolated_gtest_test(test_action_communication
+        TEST_NAME test_action_communication${target_suffix}
+        ENV ${rmw_implementation_env_var}
+      )
 
-    ament_add_ros_isolated_gtest_test(test_action_interaction
-      TEST_NAME test_action_interaction${target_suffix}
-      ENV ${rmw_implementation_env_var}
-    )
+      ament_add_ros_isolated_gtest_test(test_action_interaction
+        TEST_NAME test_action_interaction${target_suffix}
+        ENV ${rmw_implementation_env_var}
+      )
 
-    ament_add_ros_isolated_gtest_test(test_graph
-      TEST_NAME test_graph${target_suffix}
-      ENV ${rmw_implementation_env_var}
-      TIMEOUT 180
-    )
+      ament_add_ros_isolated_gtest_test(test_graph
+        TEST_NAME test_graph${target_suffix}
+        ENV ${rmw_implementation_env_var}
+        TIMEOUT 180
+      )
+    endif()
   endfunction()
 
   call_for_each_rmw_implementation(test_targets)
@@ -221,19 +228,21 @@ if(BUILD_TESTING)
       src
     )
   endif()
-  ament_add_gtest(test_action_name_remapping
-    test/rcl_action/test_action_name_remapping.cpp
-  )
-  if(TARGET test_action_name_remapping)
-    target_link_libraries(test_action_name_remapping
-      ${PROJECT_NAME}
-      osrf_testing_tools_cpp::memory_tools
-      rcl::rcl
-      test_msgs::test_msgs
+  if(NOT RCL_MICROROS)
+    ament_add_gtest(test_action_name_remapping
+      test/rcl_action/test_action_name_remapping.cpp
     )
-    target_include_directories(test_action_name_remapping PRIVATE
-      src
-    )
+    if(TARGET test_action_name_remapping)
+      target_link_libraries(test_action_name_remapping
+        ${PROJECT_NAME}
+        osrf_testing_tools_cpp::memory_tools
+        rcl::rcl
+        test_msgs::test_msgs
+      )
+      target_include_directories(test_action_name_remapping PRIVATE
+        src
+      )
+    endif()
   endif()
 endif()
 
