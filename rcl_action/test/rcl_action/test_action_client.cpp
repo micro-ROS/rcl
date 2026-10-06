@@ -300,6 +300,8 @@ protected:
   std::string get_result_service_event_topic_name;
 };
 
+// rcl_action_server_is_available needs the graph, unavailable in micro-ROS
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionClientFixture, test_action_server_is_available) {
   bool is_available = false;
   rcl_ret_t ret = rcl_action_server_is_available(nullptr, &this->action_client, &is_available);
@@ -321,6 +323,7 @@ TEST_F(TestActionClientFixture, test_action_server_is_available) {
   EXPECT_EQ(ret, RCL_RET_OK);
   EXPECT_FALSE(is_available);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
 TEST_F(TestActionClientFixture, test_action_client_is_valid) {
   bool is_valid = rcl_action_client_is_valid(nullptr);
@@ -454,7 +457,8 @@ TEST_F(TestActionClientFixture, test_action_server_is_available_maybe_fail)
   });
 }
 
-
+// service introspection counts publishers through the graph, unavailable in micro-ROS
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionClientFixture, test_default_internal_services_introspection_status)
 {
   // Check if internal service event publisher is not created by default
@@ -488,7 +492,10 @@ TEST_F(TestActionClientFixture, test_set_internal_services_introspection_content
 {
   check_set_services_introspection(RCL_SERVICE_INTROSPECTION_CONTENTS, 1);
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
 
+// the feedback content filter API is not built in micro-ROS
+#ifdef RCL_MICROROS_COMPLETE_IMPL
 TEST_F(TestActionClientFixture, test_configure_feedback_subscription_filter_goal_id_invalid_inputs)
 {
   uint8_t goal_id[UUID_SIZE] = {0};
@@ -616,3 +623,4 @@ TEST_F(
     }
   }
 }
+#endif  // RCL_MICROROS_COMPLETE_IMPL
