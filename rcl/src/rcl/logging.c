@@ -68,9 +68,13 @@ rcl_logging_configure_with_output_handler(
   rcl_log_levels_t * log_levels = &global_args->impl->log_levels;
   const char * file_name_prefix = global_args->impl->external_log_file_name_prefix;
   const char * config_file = global_args->impl->external_log_config_file;
-  g_rcl_logging_stdout_enabled = !global_args->impl->log_stdout_disabled;
-  g_rcl_logging_rosout_enabled = !global_args->impl->log_rosout_disabled;
-  g_rcl_logging_ext_lib_enabled = !global_args->impl->log_ext_lib_disabled;
+  bool global_disable = false;
+  #ifdef RCUTILS_NO_LOGGING
+    global_disable = true;
+  #endif
+  g_rcl_logging_stdout_enabled = !global_args->impl->log_stdout_disabled && !global_disable;
+  g_rcl_logging_rosout_enabled = !global_args->impl->log_rosout_disabled && !global_disable;
+  g_rcl_logging_ext_lib_enabled = !global_args->impl->log_ext_lib_disabled && !global_disable;
   rcl_ret_t status = RCL_RET_OK;
   g_rcl_logging_num_out_handlers = 0;
 
